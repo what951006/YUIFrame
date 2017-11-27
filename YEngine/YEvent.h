@@ -21,7 +21,7 @@ public:
 
 	~YEvent(void);
 
-	void SendEvent(YObject*obj,YObject*pMain,EventType evtype,int x=0,int y=0);
+	void SendEvent(YObject*obj,EventType evtype,int x=0,int y=0,int width=0,int height=0);
 
 	void Update();
 
@@ -30,7 +30,7 @@ public:
 	
 private:
 
-	YObject* FindObjHelper(YRect re,YObject*,const YPoint);
+	YUIObject* FindUIObjHelper(YRect re,YUIObject*,const YPoint);
 
 	queue<EventObject> m_que;
 };

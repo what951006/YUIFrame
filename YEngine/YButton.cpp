@@ -17,22 +17,16 @@ YButton::~YButton(void)
 void YButton::DrawWindow()
 {
 	YUIObject::DrawWindow();
+	YRect re=this->GetGeometryFromMain();
 
-	int x=GetGeometry().x;
-	int y=GetGeometry().y;
-	int w=GetGeometry().width;
-	int h=GetGeometry().height;
+	int x=re.x;
+	int y=re.y;
+	int w=re.width;
+	int h=re.height;
 
-	YObject*parent=this;
-	while(parent =parent->GetParent())
-	{
-		YUIObject * p=dynamic_cast<YUIObject*>(parent);
-		if(p && !p->IsWindow())
-		{
-			x += p->GetGeometry().x;
-			y +=p->GetGeometry().y;
-		}
-	}
+	
+	
+	
 
 
 	YPainter p(this);
@@ -47,7 +41,9 @@ void YButton::DrawWindow()
 
 void YButton::OnMouseDown(const YPoint pt)
 {
-	
+	char buf[128]={0};
+	sprintf(buf,"PushButton down:  x:%d , y:%d",pt.x,pt.y);
+	MessageBoxA(NULL,buf,"Hello",NULL);
 }
 void YButton::OnMouseUp(const YPoint pt)
 {

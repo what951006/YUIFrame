@@ -19,23 +19,29 @@ YEvent::~YEvent(void)
 
 }
 
-void YEvent::SendEvent(YObject*obj,YObject*pMain,EventType evtype,int x,int y)
+void YEvent::SendEvent(YObject*obj,EventType evtype,int x,int y,int width,int height)
 {
 	EventObject eobj;
 	eobj.sender=obj;
-	eobj.pMainWin=pMain;
 	eobj.type=evtype;
 	eobj.x=x;
 	eobj.y=y;
-	m_que.push(eobj);	
+	eobj.width=width;
+	eobj.height=height;
+	m_que.push(eobj);
 }
 
 void YEvent::Update()
 {
 	while (!m_que.empty())
 	{
-		EventObject &eventobj=m_que.front();
-		eventobj.sender->OnEventOccoured(eventobj);
+		EventObject &eo=m_que.front();
+
+		YObject *par=eo.sender;
+		while (par->GetParent())
+			par=par->GetParent();
+
+		eo.sender->OnEventOccoured(eo);
 		m_que.pop();
 	}
 	YObject::Update();
@@ -47,34 +53,38 @@ YObject* YEvent::GetJudgeChild(HWND hwnd,const YPoint pos)
 	{
 		if(hl.hwnd == hwnd)
 		{
-			YRect re;
-			re.width=hl.pObj->GetGeometry().width;
-			re.height=hl.pObj->GetGeometry().height;
-			return FindObjHelper(re,hl.pObj,pos);
+			return FindUIObjHelper(hl.pObj->GetGeometryFromMain(),hl.pObj,pos);
 		}
 	}
 	return nullptr;
 }
 
-YObject* YEvent::FindObjHelper(YRect re,YObject* obj,const YPoint point)
+YUIObject* YEvent::FindUIObjHelper(YRect re,YUIObject* pObj,const YPoint point)
 {
-	if(!obj)
+	if(!pObj)
 		return nullptr;
-
-	YObject* pResult=nullptr;
-	for (auto child : obj->GetChildren())
+	re=pObj->GetGeometryFromMain();
+	if(re.IsContained(point))
 	{
-		YUIObject*pobj= dynamic_cast<YUIObject*>(child);
+		YUIObject* pResult=nullptr;
+		for (auto child : pObj->GetChildren())
+		{
+			pResult=FindUIObjHelper(re,dynamic_cast<YUIObject*>(child),point);
 
-		re.width=pobj->GetGeometry().width;
-		re.height=pobj->GetGeometry().height;
-		re.x += pobj->GetGeometry().x;
-		re.y += pobj->GetGeometry().y;
+			if(!pResult)
+			{
+				return pObj;
+			}
 
-		pResult=FindObjHelper(re,child,point);
-		if(re.IsContained(point))
-			return !pResult ? pobj:nullptr;
+			if(pResult->GetGeometryFromMain().IsContained(point))
+			{
+				return pResult;
+			}
+		}
+		if(!pResult)
+		{
+			return pObj;
+		}
 	}
-
-	return pResult;
+	return nullptr;
 }

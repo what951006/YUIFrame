@@ -65,24 +65,23 @@ bool YUIObject::InitInstance()
 }
 
 
-void YUIObject::SetGeometry(int x,int y,int w,int h)
+void YUIObject::SetGeometry(int x,int y,int w,int h,bool bMove)
 {
 	m_re.x=x;
 	m_re.y=y;
 	m_re.width=w;
 	m_re.height=h;
 
-	if(m_bWindow)
+	if(bMove)
 	{
-		MoveWindow(m_hRootWnd,x,y,w,h,false);
-		DrawWindow();
-		Update();
+		if(m_bWindow)
+		{
+			MoveWindow(m_hRootWnd,x,y,w,h,false);
+			Update();
+		}
 	}
-	else
-	{
-		DrawWindow();
-		Update();
-	}
+	DrawWindow();
+	Update();
 }
 void YUIObject::DrawWindow()
 {
@@ -112,6 +111,47 @@ void YUIObject::Show(bool bShow)
 }
 bool YUIObject::OnEventOccoured(EventObject obj)
 {
+	/*~*/
+	bool bResult=false;
+	
+	switch(obj.type)
+	{
+	case MOUSE_PRESS_DOWN_L:
+		{
+			if(obj.sender == this)
+			{
+				YPoint pos(obj.x,obj.y);
+				pos-=YPoint::MapFromMain(this);
+				
+				OnMouseDown(pos);
+				return true;
+			}
+			YPoint pos=YPoint::MapFromMain(this);
+			for(auto child : GetChildren())
+			{
+				if(child->OnEventOccoured(obj))
+					return true;
+			}
+		}
+		break;
+	case MOUSE_PRESS_UP_L:
+		{
+			
+		}	
+		break;
+	case MOUSE_MOVE:
+		{
+			
+		}
+		break;
+	case WINDOWS_SIZE:
+		{
+			SetGeometry(obj.x,obj.y,obj.width,obj.height,false);
+		}
+		break;
+	default:
+		break;
+	}
 	return YObject::OnEventOccoured(obj);
 }
 

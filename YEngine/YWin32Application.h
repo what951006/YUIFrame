@@ -59,7 +59,7 @@ public:
 
 	static YEvent* GetEvent(){return &GetApp()->m_Event;}
 
-	static YObject* GetObjectByHWND(HWND hwnd);
+	static YUIObject* GetUIObjectByHWND(HWND hwnd);
 private:
 
 	/*

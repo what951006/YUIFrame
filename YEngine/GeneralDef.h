@@ -1,6 +1,8 @@
 #ifndef GENERAL_DEF_H
 #define GENERAL_DEF_H
 #include "YObject.h"
+#include "YPoint.h"
+#include "YRect.h"
 
 enum EventType
 {
@@ -8,17 +10,22 @@ enum EventType
 	MOUSE_PRESS_UP_L,
 
 	MOUSE_PRESS_DOWN_R,
-	MOUSE_PRESS_UP_R
+	MOUSE_PRESS_UP_R,
+
+	MOUSE_MOVE,
+
+	WINDOWS_SIZE
 };
 
 
 struct EventObject
 {
 	YObject *sender;
-	YObject *pMainWin;
 	EventType type;
 	int x;
 	int y;
+	int width;
+	int height;
 };
 
 #endif

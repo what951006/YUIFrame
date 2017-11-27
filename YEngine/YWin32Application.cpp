@@ -31,9 +31,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int xPos = GET_X_LPARAM(lParam); 
 			int yPos = GET_Y_LPARAM(lParam); 
 			YObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
-			YObject*pMain=YWin32Application::GetObjectByHWND(hWnd);
+			//YObject*pResult=YWin32Application::GetObjectByHWND(hWnd);
 			if(pResult)
-			   YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_DOWN_L,xPos,yPos);
+			   YWin32Application::GetEvent()->SendEvent(pResult,MOUSE_PRESS_DOWN_L,xPos,yPos);
 		}
 		break;
 	case WM_LBUTTONUP:
@@ -41,10 +41,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int xPos = GET_X_LPARAM(lParam); 
 			int yPos = GET_Y_LPARAM(lParam); 
 			YObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
-			YObject*pMain=YWin32Application::GetObjectByHWND(hWnd);
+			//YObject*pResult=YWin32Application::GetObjectByHWND(hWnd);
 			if(pResult)
 			{
-				YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_L,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(pResult,MOUSE_PRESS_UP_L,xPos,yPos);
 			}
 		}
 		break;
@@ -53,9 +53,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int xPos = GET_X_LPARAM(lParam); 
 			int yPos = GET_Y_LPARAM(lParam); 
 			YObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
-			YObject*pMain=YWin32Application::GetObjectByHWND(hWnd);
+			//YObject*pResult=YWin32Application::GetObjectByHWND(hWnd);
 			if(pResult)
-				YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_DOWN_R,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(pResult,MOUSE_PRESS_DOWN_R,xPos,yPos);
 		}
 		break;
 	case WM_RBUTTONUP:
@@ -63,9 +63,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int xPos = GET_X_LPARAM(lParam); 
 			int yPos = GET_Y_LPARAM(lParam); 
 			YObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
-			YObject*pMain=YWin32Application::GetObjectByHWND(hWnd);
+			//YObject*pResult=YWin32Application::GetObjectByHWND(hWnd);
 			if(pResult)
-				YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_R,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(pResult,MOUSE_PRESS_UP_R,xPos,yPos);
+		}
+		break;
+	case WM_MOUSEMOVE:
+		{
+
+		}
+		break;
+	case WM_SIZE:
+		{
+			int width  = LOWORD(lParam);
+			int height = HIWORD(lParam);
+			RECT re;
+			GetWindowRect(hWnd,&re);
+			YObject*pResult=YWin32Application::GetUIObjectByHWND(hWnd);
+			if(pResult)
+				YWin32Application::GetEvent()->SendEvent(pResult,WINDOWS_SIZE,re.left,re.top,width,height);
 		}
 		break;
 	case WM_ERASEBKGND:
@@ -159,7 +175,7 @@ void YWin32Application::RemoveOneHwnd(HWND hwnd)
 		}
 	}
 }
-YObject* YWin32Application::GetObjectByHWND(HWND hwnd)
+YUIObject* YWin32Application::GetUIObjectByHWND(HWND hwnd)
 {
 	for(auto hp  :  s_hvec)
 	{

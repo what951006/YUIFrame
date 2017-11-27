@@ -8,6 +8,7 @@ public:
 	MainWindow(void);
 	~MainWindow(void);
 	
+	virtual void OnMouseDown(const YPoint) override;
 private:
 	YButton m_btn;
 };

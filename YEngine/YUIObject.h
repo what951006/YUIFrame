@@ -20,7 +20,7 @@ public:
 
 	~YUIObject(void);
 
-	void SetGeometry(int x,int y,int w,int h);
+	void SetGeometry(int x,int y,int w,int h,bool bMove=true);
 
 	/*
 	@brief:Register class name

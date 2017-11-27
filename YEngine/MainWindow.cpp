@@ -19,3 +19,12 @@ MainWindow::MainWindow(void)
 MainWindow::~MainWindow(void)
 {
 }
+
+void MainWindow::OnMouseDown(const YPoint pos)
+{
+
+	char buf[128]={0};
+	sprintf(buf,"MainWindows :  x:%d , y:%d",pos.x,pos.y);
+	
+	MessageBoxA(NULL,buf,"Hello",NULL);
+}

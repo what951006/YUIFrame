@@ -19,3 +19,10 @@ YPoint& YPoint::operator+= (const YPoint &pos)
 	this->y+=pos.y;
 	return *this;
 }
+
+YPoint& YPoint::operator -= (const YPoint &pos)
+{
+	this->x-=pos.x;
+	this->y-=pos.y;
+	return *this;
+}

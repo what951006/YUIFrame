@@ -21,6 +21,8 @@ public:
 	static YPoint MapFromMain(YUIObject* des);
 
 	YPoint &operator +=(const YPoint &pos);
+
+	YPoint &operator -=(const YPoint &pos);
 	
 };
 
