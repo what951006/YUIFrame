@@ -85,6 +85,7 @@
     <ClInclude Include="YButton.h" />
     <ClInclude Include="YEngine.h" />
     <ClInclude Include="YEvent.h" />
+    <ClInclude Include="YMessageBox.h" />
     <ClInclude Include="YObject.h" />
     <ClInclude Include="YPainter.h" />
     <ClInclude Include="YPoint.h" />
@@ -101,6 +102,7 @@
     <ClCompile Include="YButton.cpp" />
     <ClCompile Include="YEngine.cpp" />
     <ClCompile Include="YEvent.cpp" />
+    <ClCompile Include="YMessageBox.cpp" />
     <ClCompile Include="YObject.cpp" />
     <ClCompile Include="YPainter.cpp" />
     <ClCompile Include="YPoint.cpp" />

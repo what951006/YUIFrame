@@ -40,7 +40,9 @@ public:
 
 	virtual void DrawWindow(HDC &dc);
 
-	LPCWSTR GetAppClassName(){return _T("YUIObject");}
+	LPCWSTR GetAppClassName(){return m_className;}
+
+	void setClassName(LPCWSTR lpwstr){swprintf(m_className,sizeof(m_className), lpwstr);}
 
 	YRect GetGeometry(){return m_re;}
 
@@ -53,7 +55,6 @@ public:
 	bool IsWindow(){return m_bWindow;}
 
 
-protected:
 	virtual bool OnEventOccoured(EventObject obj) override;
 
 	virtual void OnMouseDown(const YPoint point){}
@@ -63,10 +64,10 @@ protected:
 	virtual void OnMouseUp(const YPoint point){}
 private:
 	YRect m_re;
-
+	HBRUSH m_BGBru;
 	HWND m_hRootWnd;
 	bool m_bWindow;
-	HBRUSH m_BGBru;
 
+	wchar_t m_className[24];
 };
 

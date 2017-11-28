@@ -60,6 +60,9 @@
     <ClInclude Include="YPoint.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="YMessageBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,6 +93,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="YPoint.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="YMessageBox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

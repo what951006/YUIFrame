@@ -16,6 +16,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	YWin32Application app(hInstance);
 
 	MainWindow mw;
+	mw.setClassName(L"YUIObject");
+	mw.YRegisterClass();
+	mw.InitInstance();
+	YWin32Application::AddHwnd(mw.GetHwnd(),&mw);
+
 	mw.SetGeometry(800,800,400,400);
 	mw.Show();
 

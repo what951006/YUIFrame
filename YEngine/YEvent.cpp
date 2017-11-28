@@ -19,7 +19,7 @@ YEvent::~YEvent(void)
 
 }
 
-void YEvent::SendEvent(YObject*obj,EventType evtype,int x,int y,int width,int height)
+void YEvent::SendEvent(YObject*obj,YUIObject*pMain,EventType evtype,int x,int y,int width,int height)
 {
 	EventObject eobj;
 	eobj.sender=obj;
@@ -29,11 +29,7 @@ void YEvent::SendEvent(YObject*obj,EventType evtype,int x,int y,int width,int he
 	eobj.width=width;
 	eobj.height=height;
 
-	YObject *par=eobj.sender;
-	while (par->GetParent())
-		par=par->GetParent();
-
-	eobj.sender->OnEventOccoured(eobj);
+	pMain->OnEventOccoured(eobj);
 }
 
 void YEvent::Update()
@@ -41,7 +37,7 @@ void YEvent::Update()
 	YObject::Update();
 }
 
-YObject* YEvent::GetJudgeChild(HWND hwnd,const YPoint pos)
+YUIObject* YEvent::GetJudgeChild(HWND hwnd,const YPoint pos)
 {
 	for(auto hl : YWin32Application::GetHwndList())
 		if(hl.hwnd == hwnd)

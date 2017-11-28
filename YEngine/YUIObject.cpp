@@ -14,8 +14,6 @@ YUIObject::YUIObject(YObject*pParent)
 	{
 		//create a window here
 		m_bWindow=true;
-		YRegisterClass();
-		InitInstance();
 	}
 	else
 	{
@@ -57,8 +55,7 @@ bool YUIObject::InitInstance()
    if (!m_hRootWnd)
    {
       return FALSE;
-   } 
-   YWin32Application::AddHwnd(m_hRootWnd,this);
+   }
    return TRUE;
 }
 

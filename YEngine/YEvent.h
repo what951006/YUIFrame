@@ -21,11 +21,11 @@ public:
 
 	~YEvent(void);
 
-	void SendEvent(YObject*obj,EventType evtype,int x=0,int y=0,int width=0,int height=0);
+	void SendEvent(YObject*obj,YUIObject*pMain,EventType evtype,int x=0,int y=0,int width=0,int height=0);
 
 	void Update();
 
-	YObject* GetJudgeChild(HWND hwnd,const YPoint pos);
+	YUIObject* GetJudgeChild(HWND hwnd,const YPoint pos);
 
 	
 private:

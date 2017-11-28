@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "YButton.h"
 #include "YPainter.h"
-
+#include "YMessageBox.h"
 
 YButton::YButton(YUIObject*obj)
 	:YUIObject(obj)
@@ -34,9 +34,7 @@ void YButton::DrawWindow(HDC &dc)
 
 void YButton::OnMouseDown(const YPoint pt)
 {
-	char buf[128]={0};
-	sprintf_s(buf,"PushButton down:  x:%d , y:%d",pt.x,pt.y);
-	MessageBoxA(NULL,buf,"Hello",NULL);
+	YMessageBox::Show(this);
 }
 void YButton::OnMouseUp(const YPoint pt)
 {
