@@ -3,32 +3,35 @@
 #include "YUIObject.h"
 
 
-YPainter::YPainter(YObject*pParent)
-	:YObject(pParent)
+YPainter::YPainter(HDC&dc,YUIObject*pParent)
+	:m_dc(dc)
+	,m_pParent(pParent)
 {
 
 }
+	
 
 
 YPainter::~YPainter(void)
 {
-
+	ReleaseDC(m_pParent->GetHwnd(),m_memDC);
 }
 
 void YPainter::DrawLine(int x,int y,int x2,int y2)
 {
-	if(GetParent())
-	{
-		YUIObject *obj=dynamic_cast<YUIObject*>(GetParent());
+	Pen pen(Color(200,200,0));
+	Graphics gr(m_dc);
+	gr.DrawLine(&pen,x,y,x2,y2);
 
-		HWND hwnd=obj->GetHwnd();
-		HDC dc=GetDC(hwnd);
-		
-		Pen myPen(Color(88, 88, 88, 0), 1);
-		Graphics gr(dc);
-		gr.DrawLine(&myPen,x,y,x2,y2);
-		
-		ReleaseDC(hwnd,dc);
-	}
+
+}
+
+void YPainter::FillRect(int x,int y,int x2,int y2)
+{
+	
+}
+
+void YPainter::FillRect(const YRect &re)
+{
 
 }

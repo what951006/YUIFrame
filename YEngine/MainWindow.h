@@ -9,7 +9,11 @@ public:
 	~MainWindow(void);
 	
 	virtual void OnMouseDown(const YPoint) override;
+
+	virtual void OnMouseMove(const YPoint point)override;
 private:
-	YButton m_btn;
+	YButton *m_btn;
+
+	YButton *m_btn2;
 };
 

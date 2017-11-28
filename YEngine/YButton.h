@@ -18,7 +18,7 @@ public:
 
 	~YButton(void);
 
-	virtual void DrawWindow();
+	virtual void DrawWindow(HDC &dc);
 protected:
 	virtual void OnMouseDown(const YPoint) override;
 

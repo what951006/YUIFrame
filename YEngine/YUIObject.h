@@ -38,7 +38,7 @@ public:
 
 	void Show(bool bShow=true);
 
-	virtual void DrawWindow();
+	virtual void DrawWindow(HDC &dc);
 
 	LPCWSTR GetAppClassName(){return _T("YUIObject");}
 

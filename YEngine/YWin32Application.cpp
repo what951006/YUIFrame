@@ -20,18 +20,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		wmEvent = HIWORD(wParam);
 		break;
 	case WM_CREATE:
-		for(HPMAP hp : YWin32Application::GetHwndList())
+		/*for(HPMAP hp : YWin32Application::GetHwndList())
 			{
 				if(hp.hwnd == hWnd)
-					hp.pObj->DrawWindow();
-			}
+					hp.pObj->DrawWindow(TODO);
+			}*/
 		break;
 	case WM_LBUTTONDOWN:
 		{
 			int xPos = GET_X_LPARAM(lParam); 
 			int yPos = GET_Y_LPARAM(lParam); 
 			YObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
-			//YObject*pResult=YWin32Application::GetObjectByHWND(hWnd);
 			if(pResult)
 			   YWin32Application::GetEvent()->SendEvent(pResult,MOUSE_PRESS_DOWN_L,xPos,yPos);
 		}
@@ -70,13 +69,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_MOUSEMOVE:
 		{
-
+			int xPos = GET_X_LPARAM(lParam); 
+			int yPos = GET_Y_LPARAM(lParam); 
+			YObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
+			//YObject*pResult=YWin32Application::GetObjectByHWND(hWnd);
+			if(pResult)
+				YWin32Application::GetEvent()->SendEvent(pResult,MOUSE_MOVE,xPos,yPos);
 		}
 		break;
+	//case WM_WINDOWPOSCHANGING:
 	case WM_SIZE:
 		{
 			int width  = LOWORD(lParam);
 			int height = HIWORD(lParam);
+
 			RECT re;
 			GetWindowRect(hWnd,&re);
 			YObject*pResult=YWin32Application::GetUIObjectByHWND(hWnd);
@@ -90,11 +96,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			PAINTSTRUCT ps;
 			HDC hdc=BeginPaint(hWnd,&ps);
+			HDC memDc= CreateCompatibleDC(hdc);
+			YRect &&re= YWin32Application::GetUIObjectByHWND(hWnd)->GetGeometry();
+			HBITMAP bitmap= CreateCompatibleBitmap(hdc,re.width,re.height);
+			SelectObject(memDc,bitmap);
 			for(HPMAP hp:YWin32Application::GetHwndList())
 			{
 				if(hp.hwnd == hWnd)
-					hp.pObj->DrawWindow();
-			}    
+					hp.pObj->DrawWindow(memDc);
+			}
+
+			BitBlt(hdc,0,0,re.width,re.height,memDc,0,0,SRCCOPY);
+			ReleaseDC(hWnd,memDc);
+
 			EndPaint(hWnd,&ps);
 		}
 		break;

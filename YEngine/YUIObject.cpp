@@ -2,7 +2,7 @@
 #include "YUIObject.h"
 #include "YWin32Application.h"
 #include <gdiplusbrush.h>
-
+#include "YPainter.h"
 
 
 
@@ -16,7 +16,6 @@ YUIObject::YUIObject(YObject*pParent)
 		m_bWindow=true;
 		YRegisterClass();
 		InitInstance();
-		DrawWindow();
 	}
 	else
 	{
@@ -58,8 +57,7 @@ bool YUIObject::InitInstance()
    if (!m_hRootWnd)
    {
       return FALSE;
-   }
-  
+   } 
    YWin32Application::AddHwnd(m_hRootWnd,this);
    return TRUE;
 }
@@ -72,22 +70,16 @@ void YUIObject::SetGeometry(int x,int y,int w,int h,bool bMove)
 	m_re.width=w;
 	m_re.height=h;
 
-	if(bMove)
-	{
-		if(m_bWindow)
-		{
-			MoveWindow(m_hRootWnd,x,y,w,h,false);
-			Update();
-		}
-	}
-	DrawWindow();
-	Update();
+	if(bMove && m_bWindow)
+		MoveWindow(m_hRootWnd,x,y,w,h,false);
 }
-void YUIObject::DrawWindow()
+void YUIObject::DrawWindow(HDC &dc)
 {
 	//if it is window
+	YPainter painter(dc,this);
 	if(m_bWindow)
 	{
+		
 
 	}
 	else
@@ -95,17 +87,16 @@ void YUIObject::DrawWindow()
 		
 	}
 
-	for(YObject*obj : GetChildren())//¸¸×ª×ÓÀà
+	for(YObject*obj : GetChildren())//base to derived
 	{
 		YUIObject* pChild=dynamic_cast<YUIObject*>(obj);
 		if(pChild)
-			pChild->DrawWindow();
+			pChild->DrawWindow(dc);
 	}
 }
 
 void YUIObject::Show(bool bShow)
 {
-	DrawWindow();
 	bShow? ShowWindow(m_hRootWnd,SW_SHOW): ShowWindow(m_hRootWnd,SW_HIDE);
 	UpdateWindow(m_hRootWnd);
 }
@@ -141,7 +132,20 @@ bool YUIObject::OnEventOccoured(EventObject obj)
 		break;
 	case MOUSE_MOVE:
 		{
-			
+			if(obj.sender == this)
+			{
+				YPoint pos(obj.x,obj.y);
+				pos-=YPoint::MapFromMain(this);
+
+				OnMouseMove(pos);
+				return true;
+			}
+			YPoint pos=YPoint::MapFromMain(this);
+			for(auto child : GetChildren())
+			{
+				if(child->OnEventOccoured(obj))
+					return true;
+			}
 		}
 		break;
 	case WINDOWS_SIZE:
@@ -157,8 +161,9 @@ bool YUIObject::OnEventOccoured(EventObject obj)
 
 YRect YUIObject::GetGeometryFromMain()
 {
-	YRect re=GetGeometry();
-	re.x= YPoint::MapFromMain(this).x;
-	re.y=YPoint::MapFromMain(this).y;
+	YRect &&re=GetGeometry();
+	YPoint &&pt=YPoint::MapFromMain(this);
+	re.x= pt.x;
+	re.y=pt.y;
 	return re;
 }

@@ -10,17 +10,26 @@
 @time:2017-11-25 14:32:37
 **************************************************/
 
-#include "YObject.h"
+#include "YUIObject.h"
 
-class YPainter :public YObject
+class YPainter
 {
 public:
-	YPainter(YObject*pParent);
+	YPainter(HDC &dc,YUIObject*pParent);
 
 	~YPainter(void);
 
 	void DrawLine(int x,int y,int x2,int y2);
 
 	void DrawImage();
+
+	void FillRect(int x,int y,int w,int h);
+
+	void FillRect(const YRect &re);
+
+	HDC m_dc;
+	HDC m_memDC;
+	HBITMAP m_hbitmap;
+	YUIObject *m_pParent;
 };
 

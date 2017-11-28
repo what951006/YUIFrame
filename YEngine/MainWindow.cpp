@@ -1,11 +1,17 @@
 #include "stdafx.h"
 #include "MainWindow.h"
-
+#include "YButton.h"
 
 MainWindow::MainWindow(void)
-	:m_btn(this)
 {
-	m_btn.SetGeometry(0,80,20,20);
+	YUIObject *pObj=new YUIObject(this);
+	pObj->SetGeometry(200,100,800,900);
+
+	m_btn=new YButton(pObj);
+	m_btn->SetGeometry(0,80,20,20);
+
+	m_btn2=new YButton(pObj);
+	m_btn2->SetGeometry(120,80,20,20);
 
 
 	//YPoint pos=YPoint::MapFromMain(&m_btn);
@@ -13,6 +19,7 @@ MainWindow::MainWindow(void)
 	//sprintf(buf,"x:%d , y:%d",pos.x,pos.y);
 	//
 	//MessageBoxA(NULL,buf,"Hello",NULL);
+
 }
 
 
@@ -24,7 +31,17 @@ void MainWindow::OnMouseDown(const YPoint pos)
 {
 
 	char buf[128]={0};
-	sprintf(buf,"MainWindows :  x:%d , y:%d",pos.x,pos.y);
+	sprintf_s(buf,"MainWindows :  x:%d , y:%d",pos.x,pos.y);
 	
 	MessageBoxA(NULL,buf,"Hello",NULL);
+}
+
+void MainWindow::OnMouseMove(const YPoint pos)
+{
+	char buf[128]={0};
+	auto dc=GetDC(GetHwnd());
+	sprintf_s(buf,"MainWindows :  x:%d , y:%d  dc:%d",pos.x,pos.y,dc);
+
+	SetWindowTextA(this->GetHwnd(),buf);
+	ReleaseDC(GetHwnd(),dc);
 }

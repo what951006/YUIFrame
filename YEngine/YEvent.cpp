@@ -28,34 +28,24 @@ void YEvent::SendEvent(YObject*obj,EventType evtype,int x,int y,int width,int he
 	eobj.y=y;
 	eobj.width=width;
 	eobj.height=height;
-	m_que.push(eobj);
+
+	YObject *par=eobj.sender;
+	while (par->GetParent())
+		par=par->GetParent();
+
+	eobj.sender->OnEventOccoured(eobj);
 }
 
 void YEvent::Update()
 {
-	while (!m_que.empty())
-	{
-		EventObject &eo=m_que.front();
-
-		YObject *par=eo.sender;
-		while (par->GetParent())
-			par=par->GetParent();
-
-		eo.sender->OnEventOccoured(eo);
-		m_que.pop();
-	}
 	YObject::Update();
 }
 
 YObject* YEvent::GetJudgeChild(HWND hwnd,const YPoint pos)
 {
 	for(auto hl : YWin32Application::GetHwndList())
-	{
 		if(hl.hwnd == hwnd)
-		{
 			return FindUIObjHelper(hl.pObj->GetGeometryFromMain(),hl.pObj,pos);
-		}
-	}
 	return nullptr;
 }
 
@@ -70,21 +60,11 @@ YUIObject* YEvent::FindUIObjHelper(YRect re,YUIObject* pObj,const YPoint point)
 		for (auto child : pObj->GetChildren())
 		{
 			pResult=FindUIObjHelper(re,dynamic_cast<YUIObject*>(child),point);
-
-			if(!pResult)
-			{
-				return pObj;
-			}
-
-			if(pResult->GetGeometryFromMain().IsContained(point))
-			{
+			if(pResult)
 				return pResult;
-			}
 		}
 		if(!pResult)
-		{
 			return pObj;
-		}
 	}
 	return nullptr;
 }
