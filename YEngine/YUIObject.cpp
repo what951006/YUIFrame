@@ -29,7 +29,7 @@ YUIObject::YUIObject(YObject*pParent,bool bCreate)
 
 YUIObject::~YUIObject(void)
 {
-	YWin32Application::RemoveOneHwnd(GetHwnd());
+
 }
 
 void YUIObject::CreateWin(LPCWSTR classname,LPCWSTR title)
@@ -87,11 +87,9 @@ void YUIObject::DrawWindow(HDC &dc)
 	YPainter painter(dc,this);
 	if(m_bWindow)
 	{
-
-	}
-	else
-	{
-		
+		YRect  && re =GetGeometry();
+		SolidBrush br(Color(240,240,240,255));
+		painter.FillRect(br,0,0,re.width,re.height);
 	}
 
 	for(YObject*obj : GetChildren())//base to derived

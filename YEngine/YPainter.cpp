@@ -26,12 +26,16 @@ void YPainter::DrawLine(int x,int y,int x2,int y2)
 
 }
 
-void YPainter::FillRect(int x,int y,int x2,int y2)
+void YPainter::FillRect(const SolidBrush&br,int x,int y,int w,int h)
 {
-	
+	//SolidBrush br(Color(240,240,240,255));
+	Graphics gr(m_dc);
+	gr.FillRectangle(&br,x,y,w,h);
+
 }
 
-void YPainter::FillRect(const YRect &re)
+void YPainter::FillRect(const SolidBrush&br,const YRect &re)
 {
-
+	Graphics gr(m_dc);
+	gr.FillRectangle(&br,re.x,re.y,re.width,re.height);
 }

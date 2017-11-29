@@ -11,28 +11,37 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 	  case WM_DESTROY:
 		  {
 			  PostQuitMessage(0);
+			  YWin32Application::RemoveOneHwnd(hwnd);
 			  return 0;
 		  }
 	  case WM_ERASEBKGND:
 		  return 1;
 	  case WM_PAINT:
 		  {
-			 LPPAINTSTRUCT lp=NULL;
-			 BeginPaint(hwnd,lp);
+			  PAINTSTRUCT ps;
+			  HDC hdc=BeginPaint(hwnd,&ps);
+			  HDC memDc= CreateCompatibleDC(hdc);
+			  YRect &&re= YWin32Application::GetUIObjectByHWND(hwnd)->GetGeometry();
+			  HBITMAP bitmap= CreateCompatibleBitmap(hdc,re.width,re.height);
+			  SelectObject(memDc,bitmap);
 
-			 RECT re;
-			 GetWindowRect(hwnd,&re);
+			  YWin32Application::GetUIObjectByHWND(hwnd)->DrawWindow(memDc);
 
-			 HDC dc=GetDC(hwnd);
-			 HDC memDc =CreateCompatibleDC(dc);
-			 HBITMAP bmp=CreateCompatibleBitmap(dc,re.right - re.left,re.bottom-re.top);
-			 SelectObject(memDc,bmp);
-			 
-			 YWin32Application::GetUIObjectByHWND(hwnd)->DrawWindow(memDc);
+			  BitBlt(hdc,0,0,re.width,re.height,memDc,0,0,SRCCOPY);
+			  ReleaseDC(hwnd,memDc);
 
-			 BitBlt(dc,0,0,re.right - re.left,re.bottom-re.top,memDc,0,0,SRCCOPY);
+			  EndPaint(hwnd,&ps);
+		  }
+	  case WM_SIZE:
+		  {
+			  int width  = LOWORD(lParam);
+			  int height = HIWORD(lParam);
 
-			 EndPaint(hwnd,lp);
+			  RECT re;
+			  GetWindowRect(hwnd,&re);
+			  YUIObject*pResult=YWin32Application::GetUIObjectByHWND(hwnd);	
+			  if(pResult)
+				  YWin32Application::GetEvent()->SendEvent(pResult,pResult,WINDOWS_SIZE,re.left,re.top,width,height);
 		  }
 	}
 
@@ -46,8 +55,8 @@ YDialog::YDialog(HWND hwnd)
 	m_pParent=nullptr;
 	YRegisterClass();
 	InitInstance(GetYClassName(),_T("YModal"));
-	SetGeometry(0,0,100,100);
 	YWin32Application::AddHwnd(GetHwnd(),this);
+	SetGeometry(0,0,100,100);
 }
 
 YDialog::~YDialog(void)
@@ -102,6 +111,7 @@ int YDialog::Modal()
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+
 	EnableWindow(m_Parhwnd,TRUE);
 	SetForegroundWindow(m_Parhwnd);
 	return 1;

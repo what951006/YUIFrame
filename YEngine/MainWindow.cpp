@@ -39,9 +39,6 @@ void MainWindow::OnMouseDown(const YPoint pos)
 void MainWindow::OnMouseMove(const YPoint pos)
 {
 	char buf[128]={0};
-	auto dc=GetDC(GetHwnd());
-	sprintf_s(buf,"MainWindows :  x:%d , y:%d  dc:%d",pos.x,pos.y,dc);
-
+	sprintf_s(buf,"MainWindows :  x:%d , y:%d  ",pos.x,pos.y);
 	SetWindowTextA(this->GetHwnd(),buf);
-	ReleaseDC(GetHwnd(),dc);
 }

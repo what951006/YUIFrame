@@ -23,9 +23,9 @@ public:
 
 	void DrawImage();
 
-	void FillRect(int x,int y,int w,int h);
+	void FillRect(const SolidBrush&br,int x,int y,int w,int h);
 
-	void FillRect(const YRect &re);
+	void FillRect(const SolidBrush&br,const YRect &re);
 
 	HDC m_dc;
 	HDC m_memDC;

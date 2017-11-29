@@ -103,7 +103,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_DESTROY:
-		if(YWin32Application::GetHwndList()[0].hwnd == hWnd)
+		if(YWin32Application::GetHwndList().size()==1)//the last one!!
 		{
 			YWin32Application::QuitApp();
 			PostMessage(hWnd,WM_QUIT,0,0);
@@ -155,6 +155,7 @@ void YWin32Application::Update()
 {
 	YObject::Update();
 	/*Here is your code !!*/
+	//lock_guard<mutex> lg(g_mutex);
 	for(auto hp : s_hvec)
 		hp.pObj->Update();
 }
@@ -176,6 +177,7 @@ void YWin32Application::RemoveOneHwnd(HWND hwnd)
 YUIObject* YWin32Application::GetUIObjectByHWND(HWND hwnd)
 {
 	lock_guard<mutex> lg(g_mutex);
+
 	for(auto hp  :  s_hvec)
 		if(hp.hwnd==hwnd)
 			return hp.pObj;
