@@ -61,7 +61,7 @@ void YUIObject::YRegisterClass()
 
 bool YUIObject::InitInstance(LPCWSTR classname,LPCWSTR title)
 {
-   m_hRootWnd= CreateWindow(classname, title, WS_OVERLAPPEDWINDOW,
+   m_hRootWnd= CreateWindow(classname, title, WS_POPUP,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, YWin32Application::GetInstance(), NULL);
    if (!m_hRootWnd)
    {
@@ -79,17 +79,36 @@ void YUIObject::SetGeometry(int x,int y,int w,int h,bool bMove)
 	m_re.height=h;
 
 	if(bMove && m_bWindow)
-		MoveWindow(m_hRootWnd,x,y,w,h,false);
+		SetWindowPos(m_hRootWnd,NULL,x,y,w,h,false);
 }
+
+
+void YUIObject::SetGeometry(const YRect &re,bool bMove)
+{
+	m_re=re;
+	if(bMove && m_bWindow)
+		SetWindowPos(m_hRootWnd,NULL,re.x,re.y,re.width,re.height,false);
+}
+
 void YUIObject::DrawWindow(HDC &dc)
 {
 	//if it is window
 	YPainter painter(dc,this);
 	if(m_bWindow)
 	{
-		YRect  && re =GetGeometry();
 		SolidBrush br(Color(240,240,240,255));
-		painter.FillRect(br,0,0,re.width,re.height);
+		Pen pen(Color(255,0,0,255));
+		painter.SetPen(pen);
+		painter.FillRect(br,0,0,m_re.width,m_re.height);
+
+		painter.DrawLine(0,0,m_re.width,0);
+		painter.DrawLine(m_re.width-1,1,m_re.width-1,m_re.height);
+		painter.DrawLine(m_re.width-1,m_re.height-1,1,m_re.height-1);
+		painter.DrawLine(0,m_re.height,0,0);
+
+		painter.DrawLine(0,20,m_re.width,20);
+
+
 	}
 
 	for(YObject*obj : GetChildren())//base to derived
@@ -134,7 +153,20 @@ bool YUIObject::OnEventOccoured(EventObject obj)
 		break;
 	case MOUSE_PRESS_UP_L:
 		{
-			
+			if(obj.sender == this)
+			{
+				YPoint pos(obj.x,obj.y);
+				pos-=YPoint::MapFromMain(this);
+				
+				OnMouseUp(pos);
+				return true;
+			}
+			YPoint pos=YPoint::MapFromMain(this);
+			for(auto child : GetChildren())
+			{
+				if(child->OnEventOccoured(obj))
+					return true;
+			}
 		}	
 		break;
 	case MOUSE_MOVE:
@@ -171,6 +203,6 @@ YRect YUIObject::GetGeometryFromMain()
 	YRect &&re=GetGeometry();
 	YPoint &&pt=YPoint::MapFromMain(this);
 	re.x= pt.x;
-	re.y=pt.y;
+	re.y= pt.y;
 	return re;
 }

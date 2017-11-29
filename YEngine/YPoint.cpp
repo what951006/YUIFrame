@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "YPoint.h"
 #include "YUIObject.h"
+#include "YWin32Application.h"
 
 YPoint YPoint::MapFromMain(YUIObject* des)
 {
@@ -13,6 +14,15 @@ YPoint YPoint::MapFromMain(YUIObject* des)
 	}
 	return pos;
 }
+YPoint YPoint::MapFromGlobal(YUIObject* des)
+{
+	YPoint&&pos=MapFromMain(des);
+	des=YWin32Application::GetUIObjectByHWND(des->GetHwnd());
+	YPoint&&pos2 = des->GetPos();
+	pos+=pos2;
+	return pos;
+}
+
 YPoint& YPoint::operator+= (const YPoint &pos)
 {
 	this->x+=pos.x;

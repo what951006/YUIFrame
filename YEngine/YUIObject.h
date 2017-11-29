@@ -24,6 +24,8 @@ public:
 
 	void SetGeometry(int x,int y,int w,int h,bool bMove=true);
 
+	void SetGeometry(const YRect &re,bool bMove=true);
+
 	/*
 	@brief:Register class name
 	@param:

@@ -18,17 +18,13 @@ void YButton::DrawWindow(HDC &dc)
 {
 	YUIObject::DrawWindow(dc);
 	YPainter p(dc,this);
-
-	YRect re=this->GetGeometryFromMain();
-	int x=re.x;
-	int y=re.y;
-	int w=re.width;
-	int h=re.height;
+	Pen pen(Color( 0,0,0));
+	p.SetPen(pen);
 	
-	p.DrawLine(x,y,x+w,y);
-	p.DrawLine(x+w,y,x+w,h+y);
-	p.DrawLine(x+w,h+y,x,h+y);
-	p.DrawLine(x,h+y,x,y);
+	p.DrawLine(0,0,m_re.width,0);
+	p.DrawLine(m_re.width,0,m_re.width,m_re.height);
+	p.DrawLine(m_re.width,m_re.height,0,m_re.height);
+	p.DrawLine(0,m_re.height,0,0);
 }
 
 void YButton::OnMouseDown(const YPoint pt)

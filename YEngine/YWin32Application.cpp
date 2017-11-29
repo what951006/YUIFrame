@@ -174,6 +174,7 @@ void YWin32Application::RemoveOneHwnd(HWND hwnd)
 		}
 	}
 }
+
 YUIObject* YWin32Application::GetUIObjectByHWND(HWND hwnd)
 {
 	lock_guard<mutex> lg(g_mutex);

@@ -55,8 +55,10 @@ YDialog::YDialog(HWND hwnd)
 	m_pParent=nullptr;
 	YRegisterClass();
 	InitInstance(GetYClassName(),_T("YModal"));
+	YUIObject * pUI=YWin32Application::GetUIObjectByHWND(hwnd);
+	SetGeometry(pUI->GetGeometry());
+
 	YWin32Application::AddHwnd(GetHwnd(),this);
-	SetGeometry(0,0,100,100);
 }
 
 YDialog::~YDialog(void)
@@ -90,7 +92,7 @@ void YDialog::InitInstance(LPCWSTR classname,LPCWSTR title)
 	m_hRootWnd= CreateWindow(
 			classname,
 			title,
-			WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+			WS_POPUP,//WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,

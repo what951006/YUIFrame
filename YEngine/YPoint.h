@@ -20,6 +20,8 @@ public:
 
 	static YPoint MapFromMain(YUIObject* des);
 
+	static YPoint MapFromGlobal(YUIObject* des);
+
 	YPoint &operator +=(const YPoint &pos);
 
 	YPoint &operator -=(const YPoint &pos);
