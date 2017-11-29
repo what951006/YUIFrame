@@ -16,9 +16,11 @@ class YUIObject :public YObject
 {
 	friend class YObject;
 public:
-	YUIObject(YObject *pParent=nullptr);
+	YUIObject(YObject *pParent=nullptr,bool bCreate=true);
 
 	~YUIObject(void);
+
+	void CreateWin(LPCWSTR classname,LPCWSTR title);
 
 	void SetGeometry(int x,int y,int w,int h,bool bMove=true);
 
@@ -34,15 +36,15 @@ public:
 	@param:
 	@return:true successful ,false failed
 	*/
-	bool InitInstance();
+	bool InitInstance(LPCWSTR classname,LPCWSTR title);
 
 	void Show(bool bShow=true);
 
 	virtual void DrawWindow(HDC &dc);
 
-	LPCWSTR GetAppClassName(){return m_className;}
+	LPCWSTR GetYClassName(){return _T(YCLASS_NAME);}
 
-	void setClassName(LPCWSTR lpwstr){swprintf(m_className,sizeof(m_className), lpwstr);}
+	//void setClassName(LPCWSTR lpwstr){swprintf(m_className,sizeof(m_className), lpwstr);}
 
 	YRect GetGeometry(){return m_re;}
 
@@ -62,12 +64,12 @@ public:
 	virtual void OnMouseMove(const YPoint point){}
 
 	virtual void OnMouseUp(const YPoint point){}
-private:
+protected:
 	YRect m_re;
 	HBRUSH m_BGBru;
 	HWND m_hRootWnd;
 	bool m_bWindow;
 
-	wchar_t m_className[24];
+	//wchar_t m_className[24];
 };
 

@@ -1,13 +1,11 @@
 #include "stdafx.h"
 #include "YWin32Application.h"
 
-
 HINSTANCE YWin32Application::s_instance=NULL;
 vector<HPMAP> YWin32Application::s_hvec;
 bool YWin32Application::s_exit=false;
 YWin32Application* YWin32Application::s_pApp=nullptr;
 mutex g_mutex;
-
 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -20,7 +18,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		wmEvent = HIWORD(wParam);
 		break;
 	case WM_CREATE:
-
 		break;
 	case WM_LBUTTONDOWN:
 		{
@@ -106,8 +103,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_DESTROY:
-		if(YWin32Application::GetHwndList()[0].hwnd==hWnd)
+		if(YWin32Application::GetHwndList()[0].hwnd == hWnd)
+		{
 			YWin32Application::QuitApp();
+			PostMessage(hWnd,WM_QUIT,0,0);
+		}
 		YWin32Application::RemoveOneHwnd(hWnd);
 		break;
 	default:
@@ -139,20 +139,12 @@ int YWin32Application::Run()
 	MSG msg;
 	while (!s_exit)
 	{
-		lock_guard<mutex> lg(g_mutex);
-		for(auto hp:s_hvec)
-			if (PeekMessage (&msg,hp.hwnd, 0, 0, PM_REMOVE)) 
-			{ 
-				if (msg.message == WM_QUIT)
-					return 0; 
-				TranslateMessage (&msg) ; 
-				DispatchMessage (&msg) ; 
-			} 
-			else 
-			{ 
-				Update();
-			}
-		Sleep(15);//60֡
+		while(GetMessage (&msg,NULL, 0, 0)) 
+		{
+			TranslateMessage (&msg); 
+			DispatchMessage (&msg); 
+		}
+
 	}
 	return 1;
 }
@@ -183,6 +175,7 @@ void YWin32Application::RemoveOneHwnd(HWND hwnd)
 }
 YUIObject* YWin32Application::GetUIObjectByHWND(HWND hwnd)
 {
+	lock_guard<mutex> lg(g_mutex);
 	for(auto hp  :  s_hvec)
 		if(hp.hwnd==hwnd)
 			return hp.pObj;

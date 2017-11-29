@@ -7,31 +7,42 @@
 
 
 
-YUIObject::YUIObject(YObject*pParent)
+YUIObject::YUIObject(YObject*pParent,bool bCreate)
 	:YObject(pParent)
 {
-	if(!pParent)
+	if(!pParent && bCreate)
 	{
-		//create a window here
+		CreateWin(_T(YCLASS_NAME),L"YUI");
 		m_bWindow=true;
 	}
 	else
 	{
 		YUIObject *parent=dynamic_cast<YUIObject*>(pParent);
-		m_hRootWnd=parent->m_hRootWnd;
-		m_bWindow=false;
+		if(parent)
+		{
+			m_hRootWnd=parent->m_hRootWnd;
+			m_bWindow=false;
+		}
 	}
 }
 
 
 YUIObject::~YUIObject(void)
 {
-	
+	YWin32Application::RemoveOneHwnd(GetHwnd());
+}
+
+void YUIObject::CreateWin(LPCWSTR classname,LPCWSTR title)
+{
+	m_pParent=nullptr;
+	m_bWindow=true;
+	YRegisterClass();
+	InitInstance(classname,title);
+	YWin32Application::AddHwnd(GetHwnd(),this);
 }
 
 void YUIObject::YRegisterClass()
 {
-	m_BGBru=CreateSolidBrush(RGB(180,180,180));
 	WNDCLASSEX wcex;
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style			= CS_HREDRAW | CS_VREDRAW;
@@ -41,16 +52,16 @@ void YUIObject::YRegisterClass()
 	wcex.hInstance		= YWin32Application::GetInstance();
 	wcex.hIcon			= LoadIcon(YWin32Application::GetInstance(), MAKEINTRESOURCE(IDI_YENGINE));
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= m_BGBru;
+	wcex.hbrBackground	= NULL;
 	wcex.lpszMenuName	= 0;
-	wcex.lpszClassName	= GetAppClassName();
+	wcex.lpszClassName	= GetYClassName();
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 	RegisterClassEx(&wcex);
 }
 
-bool YUIObject::InitInstance()
+bool YUIObject::InitInstance(LPCWSTR classname,LPCWSTR title)
 {
-   m_hRootWnd= CreateWindow(GetAppClassName(), _T("Win32Appliction"), WS_OVERLAPPEDWINDOW,
+   m_hRootWnd= CreateWindow(classname, title, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, YWin32Application::GetInstance(), NULL);
    if (!m_hRootWnd)
    {
@@ -76,7 +87,6 @@ void YUIObject::DrawWindow(HDC &dc)
 	YPainter painter(dc,this);
 	if(m_bWindow)
 	{
-		
 
 	}
 	else
@@ -94,8 +104,10 @@ void YUIObject::DrawWindow(HDC &dc)
 
 void YUIObject::Show(bool bShow)
 {
+
 	bShow? ShowWindow(m_hRootWnd,SW_SHOW): ShowWindow(m_hRootWnd,SW_HIDE);
 	UpdateWindow(m_hRootWnd);
+
 }
 bool YUIObject::OnEventOccoured(EventObject obj)
 {

@@ -28,4 +28,7 @@ struct EventObject
 	int height;
 };
 
+#define YCLASS_NAME "YUIFrame"
+#define YDLG_CLA_NAME "YDlgFrame"
+
 #endif

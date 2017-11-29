@@ -33,6 +33,7 @@ using namespace Gdiplus;
 #include <queue>
 #include <atomic>
 #include <mutex>
+#include <thread>
 using namespace std;
 
 //general def

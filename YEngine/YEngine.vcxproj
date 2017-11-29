@@ -83,6 +83,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="YButton.h" />
+    <ClInclude Include="YDialog.h" />
     <ClInclude Include="YEngine.h" />
     <ClInclude Include="YEvent.h" />
     <ClInclude Include="YMessageBox.h" />
@@ -100,6 +101,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="YButton.cpp" />
+    <ClCompile Include="YDialog.cpp" />
     <ClCompile Include="YEngine.cpp" />
     <ClCompile Include="YEvent.cpp" />
     <ClCompile Include="YMessageBox.cpp" />

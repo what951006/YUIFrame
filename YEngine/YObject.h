@@ -58,10 +58,8 @@ public:
 
 protected:
 
-
-private:
 	vector<YObject*> m_ChildVec;
 
-	
+
 	YObject *m_pParent;
 };
