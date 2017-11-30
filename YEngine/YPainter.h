@@ -19,11 +19,11 @@ public:
 
 	~YPainter(void);
 
-	void SetPen(const Pen& pen){m_pPen = pen.Clone();}
+	void SetPen(const Pen& pen){ if(m_pPen) delete m_pPen;m_pPen = pen.Clone();}
 
 	void DrawLine(int x,int y,int x2,int y2);
 
-	void DrawImage();
+	void DrawImage(Image &image,int x,int y,int w,int h);
 
 	void FillRect(const SolidBrush&br,int x,int y,int w,int h);
 
@@ -34,6 +34,7 @@ public:
 	YRect m_re;
 	HDC m_dc;
 	Pen *m_pPen;
+	Graphics m_graphic;
 	YUIObject *m_pParent;
 };
 

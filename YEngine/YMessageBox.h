@@ -10,7 +10,7 @@
 @time:
 **************************************************/
 
-#include "YUIObject.h"
+#include "YDialog.h"
 #include "YButton.h"
 
 
@@ -22,14 +22,15 @@ enum YMB_TYPE
 		YMB_NO
 };
 
-class YMessageBox :public YUIObject
+class YMessageBox :public YDialog
 {
 	
 
 public:
 	static YMB_TYPE Show(YUIObject*pParent);
 
-	YMessageBox(void);
+protected:
+	YMessageBox(YUIObject*pParent);
 	~YMessageBox(void);
 
 	virtual bool OnEventOccoured(EventObject obj);

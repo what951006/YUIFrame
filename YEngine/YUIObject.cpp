@@ -61,7 +61,7 @@ void YUIObject::YRegisterClass()
 
 bool YUIObject::InitInstance(LPCWSTR classname,LPCWSTR title)
 {
-   m_hRootWnd= CreateWindow(classname, title, WS_POPUP,
+   m_hRootWnd= CreateWindow(classname, title, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, YWin32Application::GetInstance(), NULL);
    if (!m_hRootWnd)
       return FALSE;
@@ -94,8 +94,8 @@ void YUIObject::DrawWindow(HDC &dc)
 	YPainter painter(dc,this);
 	if(m_bWindow)
 	{
-		SolidBrush br(Color(240,240,240,255));
-		Pen pen(Color(255,0,0,255));
+		SolidBrush br(Color(255,240,240,240));
+		Pen pen(Color(255,255,0,0));
 		painter.SetPen(pen);
 		painter.FillRect(br,0,0,m_re.width,m_re.height);
 
@@ -104,9 +104,12 @@ void YUIObject::DrawWindow(HDC &dc)
 		painter.DrawLine(m_re.width-1,m_re.height-1,1,m_re.height-1);
 		painter.DrawLine(0,m_re.height,0,0);
 
+
 		painter.DrawLine(0,20,m_re.width,20);
 
-
+		/*Image *img= Image::FromFile(L"D:\\test.png");
+		painter.DrawImage(*img,0,0,m_re.width,m_re.height);
+		delete img;*/
 	}
 
 	for(YObject*obj : GetChildren())//base to derived
@@ -185,9 +188,18 @@ bool YUIObject::OnEventOccoured(EventObject obj)
 			}
 		}
 		break;
-	case WINDOWS_SIZE:
+	case WINDOWS_SIZE_CHANGED:
 		{
-			SetGeometry(obj.x,obj.y,obj.width,obj.height,false);
+			m_re.x=obj.x;
+			m_re.y=obj.y;
+			m_re.width=obj.width;
+			m_re.height=obj.height;
+		}
+		break;
+	case WINDOWS_MOVE_CHANGED:
+		{
+			m_re.x=obj.x;
+			m_re.y=obj.y;
 		}
 		break;
 	default:

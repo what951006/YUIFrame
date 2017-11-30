@@ -80,7 +80,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			GetWindowRect(hWnd,&re);
 			YUIObject*pResult=YWin32Application::GetUIObjectByHWND(hWnd);	
 			if(pResult)
-				YWin32Application::GetEvent()->SendEvent(pResult,pResult,WINDOWS_SIZE,re.left,re.top,width,height);
+				YWin32Application::GetEvent()->SendEvent(pResult,pResult,WINDOWS_SIZE_CHANGED,re.left,re.top,width,height);
+		}
+		break;
+	case WM_MOVE:
+		{
+			int xPos = GET_X_LPARAM(lParam); 
+			int yPos = GET_Y_LPARAM(lParam);
+			
+			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
+			if(pMain)
+				YWin32Application::GetEvent()->SendEvent(pMain,pMain,WINDOWS_MOVE_CHANGED,xPos,yPos);
 		}
 		break;
 	case WM_ERASEBKGND:
@@ -88,17 +98,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		{
 			PAINTSTRUCT ps;
+			YRect &&re= YWin32Application::GetUIObjectByHWND(hWnd)->GetGeometry();
+
 			HDC hdc=BeginPaint(hWnd,&ps);
 			HDC memDc= CreateCompatibleDC(hdc);
-			YRect &&re= YWin32Application::GetUIObjectByHWND(hWnd)->GetGeometry();
 			HBITMAP bitmap= CreateCompatibleBitmap(hdc,re.width,re.height);
 			SelectObject(memDc,bitmap);
-			
+		 	
 			YWin32Application::GetUIObjectByHWND(hWnd)->DrawWindow(memDc);
 
 			BitBlt(hdc,0,0,re.width,re.height,memDc,0,0,SRCCOPY);
+			
 			ReleaseDC(hWnd,memDc);
-
+			DeleteDC(memDc);
+			DeleteObject(bitmap);
 			EndPaint(hWnd,&ps);
 		}
 		break;
@@ -113,7 +126,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
-	return 0;
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 

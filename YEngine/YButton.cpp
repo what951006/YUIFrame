@@ -18,7 +18,7 @@ void YButton::DrawWindow(HDC &dc)
 {
 	YUIObject::DrawWindow(dc);
 	YPainter p(dc,this);
-	Pen pen(Color( 0,0,0));
+	Pen pen(Color( 255,255,0,0));
 	p.SetPen(pen);
 	
 	p.DrawLine(0,0,m_re.width,0);

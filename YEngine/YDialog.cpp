@@ -18,18 +18,20 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		  return 1;
 	  case WM_PAINT:
 		  {
+			  YRect &&re= YWin32Application::GetUIObjectByHWND(hwnd)->GetGeometry();
 			  PAINTSTRUCT ps;
 			  HDC hdc=BeginPaint(hwnd,&ps);
 			  HDC memDc= CreateCompatibleDC(hdc);
-			  YRect &&re= YWin32Application::GetUIObjectByHWND(hwnd)->GetGeometry();
 			  HBITMAP bitmap= CreateCompatibleBitmap(hdc,re.width,re.height);
 			  SelectObject(memDc,bitmap);
 
 			  YWin32Application::GetUIObjectByHWND(hwnd)->DrawWindow(memDc);
 
 			  BitBlt(hdc,0,0,re.width,re.height,memDc,0,0,SRCCOPY);
+			 
 			  ReleaseDC(hwnd,memDc);
-
+		      DeleteDC(memDc);
+			  DeleteObject(bitmap);
 			  EndPaint(hwnd,&ps);
 		  }
 	  case WM_SIZE:
@@ -41,7 +43,7 @@ LRESULT CALLBACK DialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 			  GetWindowRect(hwnd,&re);
 			  YUIObject*pResult=YWin32Application::GetUIObjectByHWND(hwnd);	
 			  if(pResult)
-				  YWin32Application::GetEvent()->SendEvent(pResult,pResult,WINDOWS_SIZE,re.left,re.top,width,height);
+				  YWin32Application::GetEvent()->SendEvent(pResult,pResult,WINDOWS_SIZE_CHANGED,re.left,re.top,width,height);
 		  }
 	}
 
@@ -92,7 +94,7 @@ void YDialog::InitInstance(LPCWSTR classname,LPCWSTR title)
 	m_hRootWnd= CreateWindow(
 			classname,
 			title,
-			WS_POPUP,//WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+			WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,

@@ -58,6 +58,7 @@ public:
 
 	bool IsWindow(){return m_bWindow;}
 
+	void SetWindowTitle(const string &str){ SetWindowTextA(GetHwnd(),str.c_str());}
 
 	virtual bool OnEventOccoured(EventObject obj) override;
 
