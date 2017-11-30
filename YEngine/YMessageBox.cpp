@@ -12,13 +12,18 @@ YMessageBox::~YMessageBox(void)
 {
 }
 
+bool YMessageBox::OnEventOccoured(EventObject obj)
+{
+	return YUIObject::OnEventOccoured(obj);
+}
+
 YMB_TYPE YMessageBox::Show(YUIObject*pParent)
 {
-	YDialog dlg(pParent->GetHwnd());
-	//YUIObject *pobj=YWin32Application::GetUIObjectByHWND(pParent->GetHwnd());
-	YPoint &&pos=YPoint::MapFromGlobal(pParent);
-	YRect &&re=pParent->GetGeometry();
-	dlg.SetGeometry(pos.x+(re.width-200)/2,pos.y+(re.height-100)/2,200,100);
+	HWND &&hwnd=pParent->GetHwnd();
+	YDialog dlg(hwnd);
+	YUIObject *pMainDlg=YWin32Application::GetUIObjectByHWND(hwnd);
+	YRect &&re=pMainDlg->GetGeometry();
+	dlg.SetGeometry(re.x+(re.width-300)/2,re.y+(re.height-200)/2,300,200);
 	dlg.Modal();
 	return YMB_OK;
 }

@@ -11,7 +11,7 @@
 **************************************************/
 
 #include "YUIObject.h"
-
+#include "YButton.h"
 
 
 enum YMB_TYPE
@@ -28,10 +28,13 @@ class YMessageBox :public YUIObject
 
 public:
 	static YMB_TYPE Show(YUIObject*pParent);
-protected:
+
 	YMessageBox(void);
 	~YMessageBox(void);
 
+	virtual bool OnEventOccoured(EventObject obj);
 
+
+	YButton *m_btn;
 };
 

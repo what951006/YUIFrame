@@ -4,14 +4,14 @@
 
 MainWindow::MainWindow(void)
 {
-	YUIObject *pObj=new YUIObject(this);
-	pObj->SetGeometry(200,100,800,900);
+//	YUIObject *pObj=new YUIObject(this);
+//	pObj->SetGeometry(200,100,800,900);
 
-	m_btn=new YButton(pObj);
-	m_btn->SetGeometry(0,80,20,20);
+	m_btn=new YButton(this);
+	m_btn->SetGeometry(80,80,20,20);
 
-	m_btn2=new YButton(pObj);
-	m_btn2->SetGeometry(120,80,20,20);
+	m_btn2=new YButton(this);
+	m_btn2->SetGeometry(140,80,20,20);
 
 
 	//YPoint pos=YPoint::MapFromMain(&m_btn);

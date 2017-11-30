@@ -64,9 +64,7 @@ bool YUIObject::InitInstance(LPCWSTR classname,LPCWSTR title)
    m_hRootWnd= CreateWindow(classname, title, WS_POPUP,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, YWin32Application::GetInstance(), NULL);
    if (!m_hRootWnd)
-   {
       return FALSE;
-   }
    return TRUE;
 }
 
