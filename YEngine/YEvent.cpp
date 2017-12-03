@@ -50,7 +50,7 @@ YUIObject* YEvent::FindUIObjHelper(YRect re,YUIObject* pObj,const YPoint point)
 	if(!pObj)
 		return nullptr;
 	re=pObj->GetGeometryFromMain();
-	if(re.IsContained(point))
+	if(re.IsContained(point) && pObj->IsShow())
 	{
 		YUIObject* pResult=nullptr;
 		for (auto child : pObj->GetChildren())

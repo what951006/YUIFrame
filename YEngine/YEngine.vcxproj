@@ -86,6 +86,7 @@
     <ClInclude Include="YDialog.h" />
     <ClInclude Include="YEngine.h" />
     <ClInclude Include="YEvent.h" />
+    <ClInclude Include="YFont.h" />
     <ClInclude Include="YMessageBox.h" />
     <ClInclude Include="YObject.h" />
     <ClInclude Include="YPainter.h" />
@@ -104,6 +105,7 @@
     <ClCompile Include="YDialog.cpp" />
     <ClCompile Include="YEngine.cpp" />
     <ClCompile Include="YEvent.cpp" />
+    <ClCompile Include="YFont.cpp" />
     <ClCompile Include="YMessageBox.cpp" />
     <ClCompile Include="YObject.cpp" />
     <ClCompile Include="YPainter.cpp" />

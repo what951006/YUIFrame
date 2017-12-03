@@ -3,6 +3,8 @@
 #include "YUIObject.h"
 #include "YEvent.h"
 
+
+int YObject::s_preTimerID=1;
 YObject::YObject(YObject*pParent)
 {
 	m_pParent=pParent;
@@ -17,8 +19,8 @@ YObject::~YObject(void)
 	if(m_pParent)
 	{
 		vector<YObject*> &vec=m_pParent->GetChildren();
-		vector<YObject*>::iterator it;
-		for(it=vec.begin();it!= vec.end();it++)
+		vector<YObject*>::iterator it=vec.begin();
+		for(;it!= vec.end();it++)
 		{
 			if(this == *it)
 			{
@@ -40,6 +42,5 @@ bool YObject::OnEventOccoured(EventObject obj)
 	/*
 		how to translate message?
 	*/
-
 	return false;
 }

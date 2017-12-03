@@ -3,51 +3,169 @@
 #include "YWin32Application.h"
 
 
-LRESULT CALLBACK DialogProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
+LRESULT CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
-
-	switch (message) 
+	int wmId, wmEvent;
+	switch (message)
 	{
-	  case WM_DESTROY:
-		  {
-			  PostQuitMessage(0);
-			  YWin32Application::RemoveOneHwnd(hwnd);
-			  return 0;
-		  }
-	  case WM_ERASEBKGND:
-		  return 1;
-	  case WM_PAINT:
-		  {
-			  YRect &&re= YWin32Application::GetUIObjectByHWND(hwnd)->GetGeometry();
-			  PAINTSTRUCT ps;
-			  HDC hdc=BeginPaint(hwnd,&ps);
-			  HDC memDc= CreateCompatibleDC(hdc);
-			  HBITMAP bitmap= CreateCompatibleBitmap(hdc,re.width,re.height);
-			  SelectObject(memDc,bitmap);
+	case WM_COMMAND:
+		wmId    = LOWORD(wParam);
+		wmEvent = HIWORD(wParam);
+		break;
+	case WM_CREATE:
+		{
+		}
+		break;
+	case WM_LBUTTONDOWN:
+		{
+			int xPos = GET_X_LPARAM(lParam); 
+			int yPos = GET_Y_LPARAM(lParam); 
+			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
+			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_DOWN_L,xPos,yPos);
 
-			  YWin32Application::GetUIObjectByHWND(hwnd)->DrawWindow(memDc);
+			SetTimer(hWnd,YWIN_TIMER_ID,10,NULL);
+			s_prePress=pResult;
+		}
+		break;
+	case WM_LBUTTONUP:
+		{
+			int xPos = GET_X_LPARAM(lParam); 
+			int yPos = GET_Y_LPARAM(lParam); 
+			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
+			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_L,xPos,yPos);
+		}
+		break;
+	case WM_TIMER:
+		{
+			if(YWIN_TIMER_ID == wParam)
+			{
+				if(s_prePress)
+				{
+					if(0 == GetAsyncKeyState(1))//1为左键，2为右键
+					{
+						s_prePress->SetPressedState(false);
+						s_prePress=nullptr;
+						KillTimer(hWnd,YWIN_TIMER_ID);
+					}
+				}
+			}
+		}
+		break;
+	case WM_MOUSEMOVE:
+		{
+			//main window leaves msg;
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof (tme);  
+			tme.dwFlags = TME_LEAVE;  
+			tme.dwHoverTime = HOVER_DEFAULT;  
+			tme.hwndTrack = hWnd; 
+			TrackMouseEvent(&tme);
+			//////////////////////////
+			int xPos = GET_X_LPARAM(lParam); 
+			int yPos = GET_Y_LPARAM(lParam); 
+			YUIObject*pNow= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
+			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
 
-			  BitBlt(hdc,0,0,re.width,re.height,memDc,0,0,SRCCOPY);
-			 
-			  ReleaseDC(hwnd,memDc);
-		      DeleteDC(memDc);
-			  DeleteObject(bitmap);
-			  EndPaint(hwnd,&ps);
-		  }
-	  case WM_SIZE:
-		  {
-			  int width  = LOWORD(lParam);
-			  int height = HIWORD(lParam);
+			if(!s_preMove)
+			{//when mouse comes to windows,these codes will be called
+				YWin32Application::GetEvent()->SendEvent(pNow,pMain,WINDOWS_ENTER,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(pNow,pMain,MOUSE_MOVE,xPos,yPos);
+			}
+			else
+			{//comes from one to another
+				if(s_preMove == pNow)//mouse moves frequently on the control
+				{
+					YWin32Application::GetEvent()->SendEvent(pNow,pMain,MOUSE_MOVE,xPos,yPos);
+				}
+				else//the first time
+				{
+					YWin32Application::GetEvent()->SendEvent(pNow,pMain,WINDOWS_ENTER,xPos,yPos);
+					YWin32Application::GetEvent()->SendEvent(s_preMove,pMain,WINDOWS_LEAVE,xPos,yPos);
+				}
+			}
+			s_preMove = pNow;
+		}
+		break;
+	case WM_MOUSELEAVE:
+		{
+			int xPos = GET_X_LPARAM(lParam); 
+			int yPos = GET_Y_LPARAM(lParam); 
+			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
+			if(s_preMove && s_preMove!=pMain)//极端情况，控件在边缘，追加一个离开情况
+				YWin32Application::GetEvent()->SendEvent(s_preMove,pMain,WINDOWS_LEAVE,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pMain,pMain,WINDOWS_LEAVE,xPos,yPos);
+			s_preMove=nullptr;
+		}
+		break;
+	case WM_RBUTTONDOWN:
+		{
+			int xPos = GET_X_LPARAM(lParam); 
+			int yPos = GET_Y_LPARAM(lParam); 
+			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
+			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
 
-			  RECT re;
-			  GetWindowRect(hwnd,&re);
-			  YUIObject*pResult=YWin32Application::GetUIObjectByHWND(hwnd);	
-			  if(pResult)
-				  YWin32Application::GetEvent()->SendEvent(pResult,pResult,WINDOWS_SIZE_CHANGED,re.left,re.top,width,height);
-		  }
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_DOWN_R,xPos,yPos);
+		}
+		break;
+	case WM_RBUTTONUP:
+		{
+			int xPos = GET_X_LPARAM(lParam); 
+			int yPos = GET_Y_LPARAM(lParam); 
+			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
+			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_R,xPos,yPos);
+		}
+		break;
+	case WM_SIZE:
+		{
+			int width  = LOWORD(lParam);
+			int height = HIWORD(lParam);
+
+			RECT re;
+			GetWindowRect(hWnd,&re);
+			YUIObject*pResult=YWin32Application::GetUIObjectByHWND(hWnd);
+			YWin32Application::GetEvent()->SendEvent(pResult,pResult,WINDOWS_SIZE_CHANGED,re.left,re.top,width,height);
+		}
+		break;
+	case WM_MOVE:
+		{
+			int xPos = GET_X_LPARAM(lParam); 
+			int yPos = GET_Y_LPARAM(lParam);
+
+			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
+			YWin32Application::GetEvent()->SendEvent(pMain,pMain,WINDOWS_MOVE_CHANGED,xPos,yPos);
+		}
+		break;
+	case WM_ERASEBKGND:
+		return 1;
+	case WM_PAINT:
+		{
+			PAINTSTRUCT ps;
+			YRect &&re= YWin32Application::GetUIObjectByHWND(hWnd)->GetGeometry();
+
+			HDC hdc=BeginPaint(hWnd,&ps);
+			HDC memDc= CreateCompatibleDC(hdc);
+			HBITMAP bitmap= CreateCompatibleBitmap(hdc,re.width,re.height);
+			SelectObject(memDc,bitmap);
+
+			YWin32Application::GetUIObjectByHWND(hWnd)->DrawWindow(memDc);
+
+			BitBlt(hdc,0,0,re.width,re.height,memDc,0,0,SRCCOPY);
+			DeleteDC(memDc);
+			DeleteObject(bitmap);
+			EndPaint(hWnd,&ps);
+		}
+		break;
+	case WM_DESTROY:
+		PostMessage(hWnd,WM_QUIT,0,0);
+		YWin32Application::RemoveOneHwnd(hWnd);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
-
-	return DefWindowProc(hwnd, message, wParam, lParam);
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 YDialog::YDialog(HWND hwnd)

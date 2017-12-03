@@ -7,10 +7,9 @@ class MainWindow :public YUIObject
 public:
 	MainWindow(void);
 	~MainWindow(void);
-	
-	virtual void OnMouseDown(const YPoint) override;
 
-	virtual void OnMouseMove(const YPoint point)override;
+
+	virtual void OnMouseLClicked();
 private:
 	YButton *m_btn;
 

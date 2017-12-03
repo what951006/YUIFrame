@@ -1,13 +1,13 @@
 #pragma once
 
 /**************************************************
-@brief:messagebox,like the windows original messagebox
-@file:
-@version:
-@company:
-@author:
-@email:
-@time:
+@brief:Ymessagebox,like the windows ordinary messagebox
+@file:YMessage.h
+@version:1.0
+@company:casino.ltd
+@author:yantao
+@email:what951006@163.com
+@time:2017-12-02 14:17:39
 **************************************************/
 
 #include "YDialog.h"

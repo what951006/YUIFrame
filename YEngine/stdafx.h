@@ -27,6 +27,7 @@
 #pragma comment(lib,"gdiplus.lib")//在工程属性中添加亦可
 using namespace Gdiplus;
 
+#pragma comment(lib, "Msimg32.lib")  //alphabend function needs this!
 
 //stl header
 #include <vector>
@@ -34,6 +35,7 @@ using namespace Gdiplus;
 #include <atomic>
 #include <mutex>
 #include <thread>
+#include <iostream>
 using namespace std;
 
 //general def

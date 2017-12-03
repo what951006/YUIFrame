@@ -14,16 +14,16 @@
 class YButton :public YUIObject
 {
 public:
-	YButton(YUIObject*obj);
+	YButton(const string &str,YUIObject*obj);
 
 	~YButton(void);
 
-	virtual void DrawWindow(HDC &dc);
+	void SetText(const string &str);
+	virtual void DrawWindow(HDC dc);
 protected:
-	virtual void OnMouseDown(const YPoint) override;
 
-	virtual void OnMouseUp(const YPoint) override;
-
-	virtual void OnMouseMove(const YPoint) override;
+	virtual void OnMouseLClicked();
+	
+	string m_strText;
 };
 

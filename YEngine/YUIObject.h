@@ -14,7 +14,7 @@
 
 class YUIObject :public YObject
 {
-	friend class YObject;
+	//friend class YObject;
 public:
 	YUIObject(YObject *pParent=nullptr,bool bCreate=true);
 
@@ -42,12 +42,8 @@ public:
 
 	void Show(bool bShow=true);
 
-	virtual void DrawWindow(HDC &dc);
-
 	LPCWSTR GetYClassName(){return _T(YCLASS_NAME);}
-
-	//void setClassName(LPCWSTR lpwstr){swprintf(m_className,sizeof(m_className), lpwstr);}
-
+	
 	YRect GetGeometry(){return m_re;}
 
 	YRect GetGeometryFromMain();
@@ -60,19 +56,53 @@ public:
 
 	void SetWindowTitle(const string &str){ SetWindowTextA(GetHwnd(),str.c_str());}
 
+	virtual void DrawWindow(HDC dc);
+
+	virtual void Update() override;
+
 	virtual bool OnEventOccoured(EventObject obj) override;
 
-	virtual void OnMouseDown(const YPoint point){}
+	virtual void OnMouseDown(const YPoint &point);
 
-	virtual void OnMouseMove(const YPoint point){}
+	virtual void OnMouseMove(const YPoint &point);
 
-	virtual void OnMouseUp(const YPoint point){}
+	virtual void OnMouseUp(const YPoint &point);
+
+	virtual void OnMouseEnter(const YPoint &point);
+
+	virtual void OnMouseLeave(const YPoint &point);
+
+	virtual void OnMouseLClicked();
+
+	void AddClickedObserver(){}
+
+	void RemoveClickedObserver(){}
+
+	void NotifyClicked(){}
+
+	
+	void SetEnterState(bool bEnter=true){m_bEnter=bEnter; Update();}
+
+	void SetPressedState(bool bPress=true){m_bPress=bPress;Update();}
+
+	bool IsShow(){return m_bShow;}
+
+	int GetWidth(){return m_re.width;}
+
+	int GetHeight(){return m_re.height;}
+
+	int GetX(){return GetParent() ? m_re.x : 0;}
+	
+	int GetY(){return GetParent() ? m_re.y : 0;}
 protected:
 	YRect m_re;
 	HBRUSH m_BGBru;
 	HWND m_hRootWnd;
 	bool m_bWindow;
-
-	//wchar_t m_className[24];
+	
+	bool m_bEnter;
+	bool m_bPress;
+	bool m_bShow;
+	//be used for enter leave event
 };
 

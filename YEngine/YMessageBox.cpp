@@ -1,22 +1,21 @@
 #include "stdafx.h"
-#include "YMessageBox.h"
 #include "YUIObject.h"
-#include "YWin32Application.h"
 #include "YDialog.h"
+#include "YMessageBox.h"
+#include "YWin32Application.h"
+
 YMessageBox::YMessageBox(YUIObject *pParent)
 	:YDialog(pParent->GetHwnd())
 {
+	SetWindowLong(GetHwnd(),   GWL_STYLE,   WS_SYSMENU|WS_CAPTION); 
+	SetWindowTitle("Warning");
 
-	DWORD   dwStyle   =   GetWindowLong(GetHwnd(),   GWL_STYLE);    
-	//dwStyle &=   ~(WS_SIZEBOX|WS_MAXIMIZEBOX|WS_MINIMIZEBOX|WS_SYSMENU);    
-	dwStyle = WS_SYSMENU|WS_CAPTION;
-	//dwStyle &= 
-	SetWindowLong(GetHwnd(),   GWL_STYLE,   dwStyle); 
-
-	SetWindowTitle("YMessageBox:Warning");
+	m_btn=new YButton("ÄãºÃ",this);
+	m_btn->SetGeometry(90,30,70,20);
+	
 	YUIObject *pMainDlg=YWin32Application::GetUIObjectByHWND(GetHwnd());
 	YRect &&re=pMainDlg->GetGeometry();
-	SetGeometry(re.x+(re.width-300)/2,re.y+(re.height-200)/2,300,200);
+	SetGeometry(re.x+(re.width-200)/2,re.y+(re.height-150)/2,200,150);
 }
 
 
@@ -27,7 +26,7 @@ YMessageBox::~YMessageBox(void)
 
 bool YMessageBox::OnEventOccoured(EventObject obj)
 {
-	return YUIObject::OnEventOccoured(obj);
+	return YDialog::OnEventOccoured(obj);
 }
 
 

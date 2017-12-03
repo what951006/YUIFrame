@@ -15,7 +15,10 @@ enum EventType
 	MOUSE_MOVE,
 
 	WINDOWS_SIZE_CHANGED,
-	WINDOWS_MOVE_CHANGED
+	WINDOWS_MOVE_CHANGED,
+
+	WINDOWS_ENTER,
+	WINDOWS_LEAVE
 };
 
 
@@ -28,6 +31,8 @@ struct EventObject
 	int width;
 	int height;
 };
+
+#define YWIN_TIMER_ID 0
 
 #define YCLASS_NAME "YUIFrame"
 #define YDLG_CLA_NAME "YDlgFrame"

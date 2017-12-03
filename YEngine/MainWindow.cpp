@@ -1,25 +1,19 @@
 #include "stdafx.h"
 #include "MainWindow.h"
 #include "YButton.h"
+#include "YMessageBox.h"
 
 MainWindow::MainWindow(void)
 {
 //	YUIObject *pObj=new YUIObject(this);
 //	pObj->SetGeometry(200,100,800,900);
 
-	m_btn=new YButton(this);
-	m_btn->SetGeometry(80,80,20,20);
+	m_btn=new YButton("µÇÂ½",this);
+	m_btn->SetGeometry(80,80,250,24);
+	//pObj->Show(false);
 
-	m_btn2=new YButton(this);
-	m_btn2->SetGeometry(140,80,20,20);
-
-
-	//YPoint pos=YPoint::MapFromMain(&m_btn);
-	//char buf[128]={0};
-	//sprintf(buf,"x:%d , y:%d",pos.x,pos.y);
-	//
-	//MessageBoxA(NULL,buf,"Hello",NULL);
-
+	m_btn2=new YButton("È·¶¨",this);
+	m_btn2->SetGeometry(15,15,250,30);
 }
 
 
@@ -27,18 +21,7 @@ MainWindow::~MainWindow(void)
 {
 }
 
-void MainWindow::OnMouseDown(const YPoint pos)
+void MainWindow::OnMouseLClicked()
 {
-
-	char buf[128]={0};
-	sprintf_s(buf,"MainWindows :  x:%d , y:%d",pos.x,pos.y);
-	
-	MessageBoxA(NULL,buf,"Hello",NULL);
-}
-
-void MainWindow::OnMouseMove(const YPoint pos)
-{
-	char buf[128]={0};
-	sprintf_s(buf,"MainWindows :  x:%d , y:%d  ",pos.x,pos.y);
-	SetWindowTextA(this->GetHwnd(),buf);
+	YMessageBox::Show(this);
 }

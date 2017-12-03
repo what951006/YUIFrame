@@ -13,8 +13,9 @@
 #include "YUIObject.h"
 #include "YEvent.h"
 
-
-extern LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+extern YUIObject *s_preMove;
+extern YUIObject *s_prePress;
+extern BOOL s_bMouseTracking;
 
 struct HPMAP	//hwnd and pointer,they map to each other
 {
@@ -45,19 +46,18 @@ public:
 	*/
 	virtual void Update();
 
-	static YWin32Application*GetApp(){return s_pApp;}
 
 	static HINSTANCE GetInstance(){return s_instance;}
 
-	static void AddHwnd(HWND hwnd,YObject*obj){HPMAP hp={hwnd,(YUIObject*)obj}; s_hvec.push_back(hp);}
+	static void AddHwnd(HWND hwnd,YUIObject*obj){HPMAP hp={hwnd,obj}; s_hvec.push_back(hp);}
 
-	static vector<HPMAP>  GetHwndList(){return s_hvec;}
+	static vector<HPMAP>&  GetHwndList(){return s_hvec;}
 
 	static void RemoveOneHwnd(HWND hwnd);
 
-	static void QuitApp(){s_exit=true;}
+	static void QuitApp(){PostQuitMessage(0);}
 
-	static YEvent* GetEvent(){return &GetApp()->m_Event;}
+	static YEvent* GetEvent(){return &s_pApp->m_Event;}
 
 	static YUIObject* GetUIObjectByHWND(HWND hwnd);
 private:

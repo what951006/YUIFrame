@@ -11,7 +11,7 @@
 **************************************************/
 
 #include "YUIObject.h"
-
+#include "YFont.h"
 class YPainter
 {
 public:
@@ -21,6 +21,14 @@ public:
 
 	void SetPen(const Pen& pen){ if(m_pPen) delete m_pPen;m_pPen = pen.Clone();}
 
+	void SetFont(const YFont &font);
+
+	void SetTransparent(int value);
+
+	YFont& GetFont(){return *m_pFont;}
+
+	void SetFontColor(int r, int g ,int b);
+
 	void DrawLine(int x,int y,int x2,int y2);
 
 	void DrawImage(Image &image,int x,int y,int w,int h);
@@ -29,12 +37,19 @@ public:
 
 	void FillRect(const SolidBrush&br,const YRect &re);
 
-//private:
+	void DrawText(const string &str,int x, int y);
 
-	YRect m_re;
+	HDC GetMemDC(){return m_memDC;}
+
+private:
+	
 	HDC m_dc;
+	HDC m_memDC;
 	Pen *m_pPen;
-	Graphics m_graphic;
+	Graphics *m_pGraphic;
 	YUIObject *m_pParent;
+	YFont *m_pFont;
+	HBITMAP m_bitmap;
+	int m_tranValue;
 };
 

@@ -1,135 +1,16 @@
 #include "stdafx.h"
 #include "YWin32Application.h"
+#include "YUIObject.h"
 
 HINSTANCE YWin32Application::s_instance=NULL;
 vector<HPMAP> YWin32Application::s_hvec;
-bool YWin32Application::s_exit=false;
 YWin32Application* YWin32Application::s_pApp=nullptr;
 mutex g_mutex;
 
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	int wmId, wmEvent;
-	switch (message)
-	{
-	case WM_COMMAND:
-		wmId    = LOWORD(wParam);
-		wmEvent = HIWORD(wParam);
-		break;
-	case WM_CREATE:
-		break;
-	case WM_LBUTTONDOWN:
-		{
-			int xPos = GET_X_LPARAM(lParam); 
-			int yPos = GET_Y_LPARAM(lParam); 
-			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
-			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			if(pResult)
-			   YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_DOWN_L,xPos,yPos);
-		}
-		break;
-	case WM_LBUTTONUP:
-		{
-			int xPos = GET_X_LPARAM(lParam); 
-			int yPos = GET_Y_LPARAM(lParam); 
-			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
-			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			if(pResult)
-			{
-				YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_L,xPos,yPos);
-			}
-		}
-		break;
-	case WM_RBUTTONDOWN:
-		{
-			int xPos = GET_X_LPARAM(lParam); 
-			int yPos = GET_Y_LPARAM(lParam); 
-			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
-			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			if(pResult)
-				YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_DOWN_R,xPos,yPos);
-		}
-		break;
-	case WM_RBUTTONUP:
-		{
-			int xPos = GET_X_LPARAM(lParam); 
-			int yPos = GET_Y_LPARAM(lParam); 
-			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
-			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			if(pResult)
-				YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_R,xPos,yPos);
-		}
-		break;
-	case WM_MOUSEMOVE:
-		{
-			int xPos = GET_X_LPARAM(lParam); 
-			int yPos = GET_Y_LPARAM(lParam); 
-			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
-			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			if(pResult)
-				YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_MOVE,xPos,yPos);
-		}
-		break;
-	case WM_SIZE:
-		{
-			int width  = LOWORD(lParam);
-			int height = HIWORD(lParam);
-
-			RECT re;
-			GetWindowRect(hWnd,&re);
-			YUIObject*pResult=YWin32Application::GetUIObjectByHWND(hWnd);	
-			if(pResult)
-				YWin32Application::GetEvent()->SendEvent(pResult,pResult,WINDOWS_SIZE_CHANGED,re.left,re.top,width,height);
-		}
-		break;
-	case WM_MOVE:
-		{
-			int xPos = GET_X_LPARAM(lParam); 
-			int yPos = GET_Y_LPARAM(lParam);
-			
-			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			if(pMain)
-				YWin32Application::GetEvent()->SendEvent(pMain,pMain,WINDOWS_MOVE_CHANGED,xPos,yPos);
-		}
-		break;
-	case WM_ERASEBKGND:
-		return 1;
-	case WM_PAINT:
-		{
-			PAINTSTRUCT ps;
-			YRect &&re= YWin32Application::GetUIObjectByHWND(hWnd)->GetGeometry();
-
-			HDC hdc=BeginPaint(hWnd,&ps);
-			HDC memDc= CreateCompatibleDC(hdc);
-			HBITMAP bitmap= CreateCompatibleBitmap(hdc,re.width,re.height);
-			SelectObject(memDc,bitmap);
-		 	
-			YWin32Application::GetUIObjectByHWND(hWnd)->DrawWindow(memDc);
-
-			BitBlt(hdc,0,0,re.width,re.height,memDc,0,0,SRCCOPY);
-			
-			ReleaseDC(hWnd,memDc);
-			DeleteDC(memDc);
-			DeleteObject(bitmap);
-			EndPaint(hWnd,&ps);
-		}
-		break;
-	case WM_DESTROY:
-		if(YWin32Application::GetHwndList().size()==1)//the last one!!
-		{
-			YWin32Application::QuitApp();
-			PostMessage(hWnd,WM_QUIT,0,0);
-		}
-		YWin32Application::RemoveOneHwnd(hWnd);
-		break;
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-	return DefWindowProc(hWnd, message, wParam, lParam);
-}
-
-
+YUIObject *s_preMove=nullptr;	//previous uiobject that mouse is now on
+YUIObject *s_prePress=nullptr;	//previous uiobject that mouse was pressed
+BOOL s_bMouseTracking = FALSE; 
 
 
 YWin32Application::YWin32Application(HINSTANCE instance)
@@ -140,8 +21,6 @@ YWin32Application::YWin32Application(HINSTANCE instance)
 	GdiplusStartup(&m_gdiplusToken, &m_gdiplusStartupInput, NULL);
 }
 
-
-
 YWin32Application::~YWin32Application(void)
 {
 	GdiplusShutdown(m_gdiplusToken);
@@ -149,15 +28,17 @@ YWin32Application::~YWin32Application(void)
 
 int YWin32Application::Run()
 {
-	MSG msg;
-	while (!s_exit)
-	{
-		while(GetMessage (&msg,NULL, 0, 0)) 
-		{
-			TranslateMessage (&msg); 
-			DispatchMessage (&msg); 
-		}
 
+	AllocConsole() ;
+
+	MSG msg;
+	while(GetMessage (&msg,NULL, 0, 0)) 
+	{
+		if(WM_QUIT==msg.message)
+			break;
+
+		TranslateMessage (&msg); 
+		DispatchMessage (&msg); 
 	}
 	return 1;
 }
@@ -191,7 +72,6 @@ void YWin32Application::RemoveOneHwnd(HWND hwnd)
 YUIObject* YWin32Application::GetUIObjectByHWND(HWND hwnd)
 {
 	lock_guard<mutex> lg(g_mutex);
-
 	for(auto hp  :  s_hvec)
 		if(hp.hwnd==hwnd)
 			return hp.pObj;
