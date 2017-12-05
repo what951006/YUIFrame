@@ -11,7 +11,17 @@
 **************************************************/
 class YPoint;
 struct YRect;
+class YUIObject;
 
+struct EventObject
+{
+	YObject *sender;
+	EventType type;
+	int x;
+	int y;
+	int width;
+	int height;
+};
 
 
 class YEvent :public YObject
@@ -27,7 +37,6 @@ public:
 
 	YUIObject* GetJudgeChild(HWND hwnd,const YPoint pos);
 
-	
 private:
 
 	YUIObject* FindUIObjHelper(YRect re,YUIObject*,const YPoint);

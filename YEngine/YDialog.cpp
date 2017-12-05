@@ -209,7 +209,7 @@ void YDialog::YRegisterClass()
 
 void YDialog::InitInstance(LPCWSTR classname,LPCWSTR title)
 {
-	m_hRootWnd= CreateWindow(
+	m_hWnd= CreateWindow(
 			classname,
 			title,
 			WS_OVERLAPPEDWINDOW | WS_VISIBLE,

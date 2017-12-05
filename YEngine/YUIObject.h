@@ -39,18 +39,43 @@ public:
 	@return:true successful ,false failed
 	*/
 	bool InitInstance(LPCWSTR classname,LPCWSTR title);
+	
 
+	/*
+	@brief:show or hide window and widget
+	@param:bool 
+	@return:
+	*/
 	void Show(bool bShow=true);
 
+
+	/*
+	@brief:Get the Name of YClass 
+	@param:
+	@return:
+	*/
 	LPCWSTR GetYClassName(){return _T(YCLASS_NAME);}
 	
+
+	/*
+	@brief:Get geometry,in another way ,Get this Rect 
+	@param:
+	@return:YRect
+	*/
 	YRect GetGeometry(){return m_re;}
 
+
+	/*
+	@brief:get Rect from main window ,not global window!
+	@param:
+	@return:the Rect in main window
+	*/
 	YRect GetGeometryFromMain();
+
 
 	YPoint GetPos(){return YPoint(m_re.x,m_re.y);}
 
-	HWND GetHwnd(){return m_hRootWnd;}
+	HWND GetHwnd(){return m_hWnd;}
 
 	bool IsWindow(){return m_bWindow;}
 
@@ -60,7 +85,7 @@ public:
 
 	virtual void Update() override;
 
-	virtual bool OnEventOccoured(EventObject obj) override;
+	virtual bool OnEventOccoured(EventObject &obj) override;
 
 	virtual void OnMouseDown(const YPoint &point);
 
@@ -72,15 +97,11 @@ public:
 
 	virtual void OnMouseLeave(const YPoint &point);
 
-	virtual void OnMouseLClicked();
+	virtual void OnMouseLClicked(YUIObject*);
 
-	void AddClickedObserver(){}
+	virtual void OnMouseRClicked(YUIObject*);
 
-	void RemoveClickedObserver(){}
 
-	void NotifyClicked(){}
-
-	
 	void SetEnterState(bool bEnter=true){m_bEnter=bEnter; Update();}
 
 	void SetPressedState(bool bPress=true){m_bPress=bPress;Update();}
@@ -94,15 +115,32 @@ public:
 	int GetX(){return GetParent() ? m_re.x : 0;}
 	
 	int GetY(){return GetParent() ? m_re.y : 0;}
+
+	void SetFixedSize(bool bFixed=true){m_bFixedsize=bFixed;}
+
+	bool IsFixedSize(){return m_bFixedsize;}
+
+	YRect GetMinSize(){return YRect(0,0,m_nMinW,m_nMinH);}
+
+	YRect GetMaxSize(){return YRect(0,0,m_nMaxW,m_nMaxH);}
 protected:
 	YRect m_re;
+
+	int m_nMinW;
+	int m_nMinH;
+	int m_nMaxW;
+	int m_nMaxH;
+
 	HBRUSH m_BGBru;
-	HWND m_hRootWnd;
+	HWND m_hWnd;
+
+	bool m_bFixedsize;
 	bool m_bWindow;
 	
 	bool m_bEnter;
 	bool m_bPress;
 	bool m_bShow;
-	//be used for enter leave event
+
+	
 };
 

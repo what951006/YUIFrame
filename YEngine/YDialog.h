@@ -11,8 +11,8 @@
 **************************************************/
 
 #include "YUIObject.h"
-class YDialog :
-	public YUIObject
+
+class YDialog :public YUIObject
 {
 public:
 	YDialog(HWND hd);
@@ -26,7 +26,6 @@ public:
 	int Modal();
 
 	LPCWSTR GetYClassName(){return _T(YDLG_CLA_NAME);}
-
 
 private:
 	HWND m_Parhwnd;//parent's hwnd

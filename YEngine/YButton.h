@@ -19,7 +19,8 @@ public:
 	~YButton(void);
 
 	void SetText(const string &str);
-	virtual void DrawWindow(HDC dc);
+
+	virtual void DrawWindow(HDC dc) override;
 protected:
 
 	virtual void OnMouseLClicked();

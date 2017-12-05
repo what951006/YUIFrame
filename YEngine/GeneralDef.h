@@ -1,11 +1,18 @@
 #ifndef GENERAL_DEF_H
 #define GENERAL_DEF_H
-#include "YObject.h"
-#include "YPoint.h"
-#include "YRect.h"
 
-enum EventType
+
+enum EventType:short
 {
+	YEVENT_ALL,//Don't use this item!
+	//below events were handled by us with logic
+	MOUSE_CLICKED_L,
+	MOUSE_CLICKED_R,
+
+	WINDOWS_ENTER,
+	WINDOWS_LEAVE,
+
+	//below events were handled by win system,we just dispatch them
 	MOUSE_PRESS_DOWN_L,
 	MOUSE_PRESS_UP_L,
 
@@ -15,22 +22,10 @@ enum EventType
 	MOUSE_MOVE,
 
 	WINDOWS_SIZE_CHANGED,
-	WINDOWS_MOVE_CHANGED,
-
-	WINDOWS_ENTER,
-	WINDOWS_LEAVE
+	WINDOWS_MOVE_CHANGED
 };
 
 
-struct EventObject
-{
-	YObject *sender;
-	EventType type;
-	int x;
-	int y;
-	int width;
-	int height;
-};
 
 #define YWIN_TIMER_ID 0
 

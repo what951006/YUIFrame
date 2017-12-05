@@ -21,6 +21,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_CREATE:
 		{
+			// default :create frameless windows
+
+			//DWORD dwStyle = ::GetWindowLong(hWnd, GWL_STYLE)
+			//	| WS_MAXIMIZEBOX | WS_MINIMIZEBOX
+			//	| WS_SYSMENU | WS_SIZEBOX | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+			//dwStyle &= ~(WS_CAPTION|WS_THICKFRAME);
+
+			//SetWindowLong(hWnd, GWL_STYLE, dwStyle); 
+//Í¸Ã÷¶È
+//			SetWindowLong(hWnd,GWL_EXSTYLE,dwStyle);   
+//			SetLayeredWindowAttributes(hWnd,0,0,LWA_ALPHA);  
+//
 		}
 		break;
 	case WM_LBUTTONDOWN:
@@ -42,6 +54,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
 			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_L,xPos,yPos);
+
+			if(pResult!=s_prePress && s_prePress)
+			{
+				YWin32Application::GetEvent()->SendEvent(pResult,pMain,WINDOWS_ENTER,xPos,yPos);
+			}
 		}
 		break;
 	case WM_TIMER:
@@ -74,6 +91,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int yPos = GET_Y_LPARAM(lParam); 
 			YUIObject*pNow= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
+			if(s_prePress)
+			{
+				break;
+			}
 
 			if(!s_preMove)
 			{//when mouse comes to windows,these codes will be called
@@ -160,8 +181,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			YWin32Application::GetUIObjectByHWND(hWnd)->DrawWindow(memDc);
 
 			BitBlt(hdc,0,0,re.width,re.height,memDc,0,0,SRCCOPY);
+
+			
 			DeleteDC(memDc);
 			DeleteObject(bitmap);
+		
 			EndPaint(hWnd,&ps);
 		}
 		break;
@@ -201,7 +225,7 @@ YUIObject::YUIObject(YObject*pParent,bool bCreate)
 		if(parent)
 		{
 			m_bWindow=false;
-			m_hRootWnd=parent->m_hRootWnd;
+			m_hWnd=parent->m_hWnd;
 		}
 	}
 }
@@ -209,6 +233,7 @@ YUIObject::YUIObject(YObject*pParent,bool bCreate)
 
 YUIObject::~YUIObject(void)
 {
+
 
 }
 
@@ -241,9 +266,9 @@ void YUIObject::YRegisterClass()
 
 bool YUIObject::InitInstance(LPCWSTR classname,LPCWSTR title)
 {
-   m_hRootWnd= CreateWindow(classname, title, WS_OVERLAPPEDWINDOW,
+   m_hWnd= CreateWindow(classname, title, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, YWin32Application::GetInstance(), NULL);
-   if (!m_hRootWnd)
+   if (!m_hWnd)
       return FALSE;
    return TRUE;
 }
@@ -256,7 +281,7 @@ void YUIObject::SetGeometry(int x,int y,int w,int h,bool bMove)
 	m_re.width=w;
 	m_re.height=h;
 	if(bMove && m_bWindow)
-		SetWindowPos(m_hRootWnd,NULL,x,y,w,h,false);
+		SetWindowPos(m_hWnd,NULL,x,y,w,h,false);
 }
 
 
@@ -264,7 +289,7 @@ void YUIObject::SetGeometry(const YRect &re,bool bMove)
 {
 	m_re=re;
 	if(bMove && m_bWindow)
-		SetWindowPos(m_hRootWnd,NULL,re.x,re.y,re.width,re.height,false);
+		SetWindowPos(m_hWnd,NULL,re.x,re.y,re.width,re.height,false);
 }
 
 void YUIObject::DrawWindow(HDC dc)
@@ -299,7 +324,7 @@ void YUIObject::DrawWindow(HDC dc)
 void YUIObject::Show(bool bShow)
 {
 	if(m_bWindow)
-		bShow? ShowWindow(m_hRootWnd,SW_SHOW): ShowWindow(m_hRootWnd,SW_HIDE);
+		bShow? ShowWindow(m_hWnd,SW_SHOW): ShowWindow(m_hWnd,SW_HIDE);
 
 	m_bShow=bShow;
 	Update();
@@ -309,14 +334,12 @@ void YUIObject::Show(bool bShow)
 void YUIObject::Update()
 {
 	//YObject::Update();
-	InvalidateRect(m_hRootWnd,NULL,FALSE);
+	InvalidateRect(m_hWnd,NULL,FALSE);
 }
 
-bool YUIObject::OnEventOccoured(EventObject obj)
+bool YUIObject::OnEventOccoured(EventObject &obj)
 {
 	/*~*/
-	bool bResult=false;
-	
 	switch(obj.type)
 	{
 	case MOUSE_PRESS_DOWN_L:
@@ -379,12 +402,15 @@ bool YUIObject::OnEventOccoured(EventObject obj)
 			m_re.y=obj.y;
 			m_re.width=obj.width;
 			m_re.height=obj.height;
+
+			NofityAllObserver(WINDOWS_SIZE_CHANGED);
 		}
 		break;
 	case WINDOWS_MOVE_CHANGED:
 		{
 			m_re.x=obj.x;
 			m_re.y=obj.y;
+			NofityAllObserver(WINDOWS_MOVE_CHANGED);
 		}
 		break;
 	case WINDOWS_ENTER:
@@ -443,7 +469,8 @@ void YUIObject::OnMouseUp(const YPoint &point)
 	if(m_bPress)
 	{
 		m_bPress=false;
-		OnMouseLClicked();
+		OnMouseLClicked(this);
+		NofityAllObserver(MOUSE_CLICKED_L);
 	}
 }
 
@@ -459,13 +486,25 @@ void YUIObject::OnMouseLeave(const YPoint &point)
 	Update();
 }
 
-void YUIObject::OnMouseLClicked()
+void YUIObject::OnMouseLClicked(YUIObject*obj)
 {
 	
 }
 
+void YUIObject::OnMouseRClicked(YUIObject*)
+{
+
+}
+
+
+
+
+
 YRect YUIObject::GetGeometryFromMain()
 {
+	if(YWin32Application::GetUIObjectByHWND(m_hWnd) == this)
+		return YRect(0,0,m_re.width,m_re.height);
+
 	YRect &&re=GetGeometry();
 	YPoint &&pt=YPoint::MapFromMain(this);
 	re.x= pt.x;

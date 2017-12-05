@@ -1,6 +1,7 @@
 #pragma once
 #include "YUIObject.h"
 #include "YButton.h"
+#include "YEvent.h"
 
 class MainWindow :public YUIObject
 {
@@ -10,6 +11,8 @@ public:
 
 
 	virtual void OnMouseLClicked();
+
+	virtual bool OnEventOccoured(EventObject &obj);
 private:
 	YButton *m_btn;
 

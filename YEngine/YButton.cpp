@@ -31,7 +31,7 @@ void YButton::SetText(const string &str)
 void YButton::DrawWindow(HDC dc)
 {
 	YPainter p(dc,this);
-	Pen pen(Color( 255,55,55,55));
+	Pen pen(Color( 255,100,100,100));
 	p.SetPen(pen);
 	
 	p.DrawLine(0,0,m_re.width,0);
@@ -42,26 +42,24 @@ void YButton::DrawWindow(HDC dc)
 	if(!m_bEnter)
 	{
 		SolidBrush br(Color(188,188,188));
-		p.FillRect(br,0,0,GetWidth(),GetHeight());
+		p.FillRect(br,1,1,GetWidth()-2,GetHeight()-2);
 	}
 	else
 	{
 		SolidBrush br(Color(155,155,155));
-		p.FillRect(br,0,0,GetWidth(),GetHeight());
+		p.FillRect(br,1,1,GetWidth()-2,GetHeight()-2);
 	}
 
 	if(m_bPress)
 	{
 		SolidBrush br(Color(0,120,200));
-		p.FillRect(br,0,0,GetWidth(),GetHeight());
+		p.FillRect(br,1,1,GetWidth()-2,GetHeight()-2);
 	}
 
 	YFont &font=p.GetFont();
 	int width=font.GetStrWidth(m_strText);
 	p.SetFontColor(66,66,66);
 	p.DrawText(m_strText,(m_re.width-width)/2,(m_re.height-font.GetFontHeight())/2);
-
-	YUIObject::DrawWindow(dc);
 }
 
 void YButton::OnMouseLClicked()

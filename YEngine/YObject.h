@@ -12,6 +12,9 @@
 struct EventObject;
 class YEvent;
 
+
+
+
 class YObject
 {
 public:
@@ -54,7 +57,16 @@ public:
 	@param:
 	@return:
 	*/
-	virtual bool OnEventOccoured(EventObject obj);
+	virtual bool OnEventOccoured(EventObject &obj);
+
+
+	void AddEventObserver(EventType,YObject*obj);
+	
+
+	void RemoveEventObserver(EventType,YObject*obj);
+
+	
+	void NofityAllObserver(EventType);
 
 
 	void StartTimer(int interival){}
@@ -70,4 +82,11 @@ protected:
 	YObject *m_pParent;
 	int m_timer;
 	static 	int s_preTimerID;
+
+
+	
+
+	vector<YObject*> m_msg_vec;
+
+	std::map<EventType,vector<YObject*>> m_msg_map;
 };

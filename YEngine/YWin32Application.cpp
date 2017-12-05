@@ -28,9 +28,9 @@ YWin32Application::~YWin32Application(void)
 
 int YWin32Application::Run()
 {
-
+#ifdef _DEBUG
 	AllocConsole() ;
-
+#endif // DEBUG
 	MSG msg;
 	while(GetMessage (&msg,NULL, 0, 0)) 
 	{

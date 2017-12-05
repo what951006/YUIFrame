@@ -33,7 +33,7 @@ protected:
 	YMessageBox(YUIObject*pParent);
 	~YMessageBox(void);
 
-	virtual bool OnEventOccoured(EventObject obj);
+	virtual bool OnEventOccoured(EventObject &obj);
 
 
 	YButton *m_btn;

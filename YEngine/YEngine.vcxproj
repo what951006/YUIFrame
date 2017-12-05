@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneralDef.h" />
+    <ClInclude Include="GlobalFunc.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -87,6 +88,7 @@
     <ClInclude Include="YEngine.h" />
     <ClInclude Include="YEvent.h" />
     <ClInclude Include="YFont.h" />
+    <ClInclude Include="YLayout.h" />
     <ClInclude Include="YMessageBox.h" />
     <ClInclude Include="YObject.h" />
     <ClInclude Include="YPainter.h" />
@@ -96,6 +98,7 @@
     <ClInclude Include="YWin32Application.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GlobalFunc.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -106,6 +109,7 @@
     <ClCompile Include="YEngine.cpp" />
     <ClCompile Include="YEvent.cpp" />
     <ClCompile Include="YFont.cpp" />
+    <ClCompile Include="YLayout.cpp" />
     <ClCompile Include="YMessageBox.cpp" />
     <ClCompile Include="YObject.cpp" />
     <ClCompile Include="YPainter.cpp" />

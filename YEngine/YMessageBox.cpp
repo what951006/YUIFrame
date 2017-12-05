@@ -24,7 +24,7 @@ YMessageBox::~YMessageBox(void)
 
 }
 
-bool YMessageBox::OnEventOccoured(EventObject obj)
+bool YMessageBox::OnEventOccoured(EventObject &obj)
 {
 	return YDialog::OnEventOccoured(obj);
 }
