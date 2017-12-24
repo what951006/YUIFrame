@@ -22,7 +22,7 @@ LRESULT CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			int yPos = GET_Y_LPARAM(lParam); 
 			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_DOWN_L,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_DOWN_L,xPos,yPos);
 
 			SetTimer(hWnd,YWIN_TIMER_ID,10,NULL);
 			s_prePress=pResult;
@@ -34,11 +34,15 @@ LRESULT CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			int yPos = GET_Y_LPARAM(lParam); 
 			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_L,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_UP_L,xPos,yPos);
 		}
 		break;
 	case WM_TIMER:
 		{
+			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(wParam);
+			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_UP_L,wParam);
+
 			if(YWIN_TIMER_ID == wParam)
 			{
 				if(s_prePress)
@@ -70,19 +74,19 @@ LRESULT CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 			if(!s_preMove)
 			{//when mouse comes to windows,these codes will be called
-				YWin32Application::GetEvent()->SendEvent(pNow,pMain,WINDOWS_ENTER,xPos,yPos);
-				YWin32Application::GetEvent()->SendEvent(pNow,pMain,MOUSE_MOVE,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(pNow,pMain,YEVENT_WINDOWS_ENTER,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(pNow,pMain,YEVENT_MOUSE_MOVE,xPos,yPos);
 			}
 			else
 			{//comes from one to another
 				if(s_preMove == pNow)//mouse moves frequently on the control
 				{
-					YWin32Application::GetEvent()->SendEvent(pNow,pMain,MOUSE_MOVE,xPos,yPos);
+					YWin32Application::GetEvent()->SendEvent(pNow,pMain,YEVENT_MOUSE_MOVE,xPos,yPos);
 				}
 				else//the first time
 				{
-					YWin32Application::GetEvent()->SendEvent(pNow,pMain,WINDOWS_ENTER,xPos,yPos);
-					YWin32Application::GetEvent()->SendEvent(s_preMove,pMain,WINDOWS_LEAVE,xPos,yPos);
+					YWin32Application::GetEvent()->SendEvent(pNow,pMain,YEVENT_WINDOWS_ENTER,xPos,yPos);
+					YWin32Application::GetEvent()->SendEvent(s_preMove,pMain,YEVENT_WINDOWS_LEAVE,xPos,yPos);
 				}
 			}
 			s_preMove = pNow;
@@ -94,8 +98,8 @@ LRESULT CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			int yPos = GET_Y_LPARAM(lParam); 
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
 			if(s_preMove && s_preMove!=pMain)//极端情况，控件在边缘，追加一个离开情况
-				YWin32Application::GetEvent()->SendEvent(s_preMove,pMain,WINDOWS_LEAVE,xPos,yPos);
-			YWin32Application::GetEvent()->SendEvent(pMain,pMain,WINDOWS_LEAVE,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(s_preMove,pMain,YEVENT_WINDOWS_LEAVE,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pMain,pMain,YEVENT_WINDOWS_LEAVE,xPos,yPos);
 			s_preMove=nullptr;
 		}
 		break;
@@ -106,7 +110,7 @@ LRESULT CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
 
-			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_DOWN_R,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_DOWN_R,xPos,yPos);
 		}
 		break;
 	case WM_RBUTTONUP:
@@ -115,7 +119,7 @@ LRESULT CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			int yPos = GET_Y_LPARAM(lParam); 
 			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_R,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_UP_R,xPos,yPos);
 		}
 		break;
 	case WM_SIZE:
@@ -126,7 +130,7 @@ LRESULT CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			RECT re;
 			GetWindowRect(hWnd,&re);
 			YUIObject*pResult=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pResult,pResult,WINDOWS_SIZE_CHANGED,re.left,re.top,width,height);
+			YWin32Application::GetEvent()->SendEvent(pResult,pResult,YEVENT_WINDOWS_SIZE_CHANGED,re.left,re.top,width,height);
 		}
 		break;
 	case WM_MOVE:
@@ -135,7 +139,7 @@ LRESULT CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			int yPos = GET_Y_LPARAM(lParam);
 
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pMain,pMain,WINDOWS_MOVE_CHANGED,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pMain,pMain,YEVENT_WINDOWS_MOVE_CHANGED,xPos,yPos);
 		}
 		break;
 	case WM_ERASEBKGND:

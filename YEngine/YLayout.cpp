@@ -5,7 +5,7 @@
 YLayout::YLayout(YUIObject*parent)
 	:YObject(parent)
 {
-	GetParent()->AddEventObserver(WINDOWS_MOVE_CHANGED,this);
+	GetParent()->AddEventObserver(YEVENT_WINDOWS_MOVE_CHANGED,this);
 }
 
 

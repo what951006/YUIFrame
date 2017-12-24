@@ -72,6 +72,8 @@ public:
 	*/
 	YRect GetGeometryFromMain();
 
+	YPoint GetPosFromMain();
+
 
 	YPoint GetPos(){return YPoint(m_re.x,m_re.y);}
 
@@ -100,6 +102,8 @@ public:
 	virtual void OnMouseLClicked(YUIObject*);
 
 	virtual void OnMouseRClicked(YUIObject*);
+	
+	virtual void OnTimerEvent(unsigned int nTimerID);
 
 
 	void SetEnterState(bool bEnter=true){m_bEnter=bEnter; Update();}

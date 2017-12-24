@@ -24,10 +24,22 @@ MainWindow::MainWindow(void)
 	//pObj->Show(false);
 
 	m_btn2=new YButton("确定",this);
-	m_btn2->SetGeometry(15,15,50,30);
+	m_btn2->SetGeometry(45,15,50,30);
 
 	
-	m_btn->AddEventObserver(MOUSE_CLICKED_L,this);
+	YButton* m_btn3=new YButton("确定",this);
+	m_btn3->SetGeometry(95,15,50,30);
+
+
+	YButton*m_btn4=new YButton("确定",this);
+	m_btn4->SetGeometry(165,15,50,30);
+
+
+	YButton*m_btn5=new YButton("确定",this);
+	m_btn5->SetGeometry(230,15,50,30);
+
+
+	m_btn->AddEventObserver(YEVENT_MOUSE_CLICKED_L,this);
 }
 
 
@@ -44,7 +56,7 @@ bool MainWindow::OnEventOccoured(EventObject &obj)
 {
 	if (obj.sender == m_btn)
 	{
-		if(MOUSE_CLICKED_L == obj.type)
+		if(YEVENT_MOUSE_CLICKED_L == obj.type)
 		{
 			HANDLE hd = GetStdHandle(STD_OUTPUT_HANDLE) ;
 			YDEBUG("Clicked again");

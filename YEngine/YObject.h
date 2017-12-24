@@ -68,21 +68,12 @@ public:
 	
 	void NofityAllObserver(EventType);
 
-
-	void StartTimer(int interival){}
-
-	void EndTimer(){}
-
-	virtual void OnTimerEvent(){}
 protected:
 
 	vector<YObject*> m_ChildVec;
 
 	vector<int> m_TimerID;
 	YObject *m_pParent;
-	int m_timer;
-	static 	int s_preTimerID;
-
 
 	
 

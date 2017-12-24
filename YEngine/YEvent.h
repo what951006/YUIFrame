@@ -37,6 +37,7 @@ public:
 
 	YUIObject* GetJudgeChild(HWND hwnd,const YPoint pos);
 
+	YUIObject* GetJudgeChild(int nTimerID);
 private:
 
 	YUIObject* FindUIObjHelper(YRect re,YUIObject*,const YPoint);

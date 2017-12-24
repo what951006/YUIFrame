@@ -10,16 +10,16 @@ YPainter::YPainter(HDC&dc,YUIObject*pParent)
 	,m_tranValue(255)
 {
 	//if it is window,show nothing
+	YRect &&re = pParent->GetGeometryFromMain();
 	m_memDC=CreateCompatibleDC(dc);
-	
 	SetBkMode(m_memDC,TRANSPARENT);
-	m_bitmap=CreateCompatibleBitmap(dc,pParent->GetWidth(),pParent->GetHeight());
+	m_bitmap=CreateCompatibleBitmap(dc,re.width,re.height);
 	SelectObject(m_memDC,m_bitmap);
-	BitBlt(m_memDC,0,0,pParent->GetWidth(),pParent->GetHeight(),m_dc,pParent->GetX(),pParent->GetY(),SRCCOPY);
+	BitBlt(m_memDC,0,0,re.width,re.height,m_dc,re.x,re.y,SRCCOPY);
 	
-	
-	m_pGraphic=new Graphics(m_memDC);
-	m_pFont=new YFont(m_memDC);
+
+	m_pGraphic = new Graphics(m_memDC);
+	m_pFont = new YFont(m_memDC);
 
 }
 	
@@ -34,7 +34,6 @@ YPainter::~YPainter(void)
 	bn.SourceConstantAlpha =m_tranValue; //透明度设置，0为不透明；255为完全透明
 
 	AlphaBlend(m_dc,m_pParent->GetX(),m_pParent->GetY(),m_pParent->GetWidth(),m_pParent->GetHeight(),m_memDC,0,0,m_pParent->GetWidth(),m_pParent->GetHeight(),bn);  
-	//BitBlt(m_dc,m_pParent->GetX(),m_pParent->GetY(),m_pParent->GetWidth(),m_pParent->GetHeight(),m_memDC,0,0,SRCCOPY);
 	DeleteDC(m_memDC);
 	DeleteObject(m_bitmap);
 

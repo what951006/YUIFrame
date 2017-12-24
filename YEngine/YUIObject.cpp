@@ -41,7 +41,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int yPos = GET_Y_LPARAM(lParam); 
 			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_DOWN_L,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_DOWN_L,xPos,yPos);
 
 			SetTimer(hWnd,YWIN_TIMER_ID,10,NULL);
 			s_prePress=pResult;
@@ -53,16 +53,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int yPos = GET_Y_LPARAM(lParam); 
 			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_L,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_UP_L,xPos,yPos);
 
 			if(pResult!=s_prePress && s_prePress)
 			{
-				YWin32Application::GetEvent()->SendEvent(pResult,pMain,WINDOWS_ENTER,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_WINDOWS_ENTER,xPos,yPos);
 			}
 		}
 		break;
 	case WM_TIMER:
 		{
+			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(wParam);
+			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_UP_L,wParam);
+
 			if(YWIN_TIMER_ID == wParam)
 			{
 				if(s_prePress)
@@ -98,19 +102,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			if(!s_preMove)
 			{//when mouse comes to windows,these codes will be called
-				YWin32Application::GetEvent()->SendEvent(pNow,pMain,WINDOWS_ENTER,xPos,yPos);
-				YWin32Application::GetEvent()->SendEvent(pNow,pMain,MOUSE_MOVE,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(pNow,pMain,YEVENT_WINDOWS_ENTER,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(pNow,pMain,YEVENT_MOUSE_MOVE,xPos,yPos);
 			}
 			else
 			{//comes from one to another
 				if(s_preMove == pNow)//mouse moves frequently on the control
 				{
-					YWin32Application::GetEvent()->SendEvent(pNow,pMain,MOUSE_MOVE,xPos,yPos);
+					YWin32Application::GetEvent()->SendEvent(pNow,pMain,YEVENT_MOUSE_MOVE,xPos,yPos);
 				}
 				else//the first time
 				{
-					YWin32Application::GetEvent()->SendEvent(pNow,pMain,WINDOWS_ENTER,xPos,yPos);
-					YWin32Application::GetEvent()->SendEvent(s_preMove,pMain,WINDOWS_LEAVE,xPos,yPos);
+					YWin32Application::GetEvent()->SendEvent(pNow,pMain,YEVENT_WINDOWS_ENTER,xPos,yPos);
+					YWin32Application::GetEvent()->SendEvent(s_preMove,pMain,YEVENT_WINDOWS_LEAVE,xPos,yPos);
 				}
 			}
 			s_preMove = pNow;
@@ -122,8 +126,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int yPos = GET_Y_LPARAM(lParam); 
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
 			if(s_preMove && s_preMove!=pMain)//极端情况，控件在边缘，追加一个离开情况
-				YWin32Application::GetEvent()->SendEvent(s_preMove,pMain,WINDOWS_LEAVE,xPos,yPos);
-			YWin32Application::GetEvent()->SendEvent(pMain,pMain,WINDOWS_LEAVE,xPos,yPos);
+				YWin32Application::GetEvent()->SendEvent(s_preMove,pMain,YEVENT_WINDOWS_LEAVE,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pMain,pMain,YEVENT_WINDOWS_LEAVE,xPos,yPos);
 			s_preMove=nullptr;
 		}
 		break;
@@ -134,7 +138,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
 			
-			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_DOWN_R,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_DOWN_R,xPos,yPos);
 		}
 		break;
 	case WM_RBUTTONUP:
@@ -143,7 +147,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int yPos = GET_Y_LPARAM(lParam); 
 			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(hWnd,YPoint(xPos,yPos));
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pResult,pMain,MOUSE_PRESS_UP_R,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_UP_R,xPos,yPos);
 		}
 		break;
 	case WM_SIZE:
@@ -154,7 +158,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			RECT re;
 			GetWindowRect(hWnd,&re);
 			YUIObject*pResult=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pResult,pResult,WINDOWS_SIZE_CHANGED,re.left,re.top,width,height);
+			YWin32Application::GetEvent()->SendEvent(pResult,pResult,YEVENT_WINDOWS_SIZE_CHANGED,re.left,re.top,width,height);
 		}
 		break;
 	case WM_MOVE:
@@ -163,7 +167,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int yPos = GET_Y_LPARAM(lParam);
 
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pMain,pMain,WINDOWS_MOVE_CHANGED,xPos,yPos);
+			YWin32Application::GetEvent()->SendEvent(pMain,pMain,YEVENT_WINDOWS_MOVE_CHANGED,xPos,yPos);
 		}
 		break;
 	case WM_ERASEBKGND:
@@ -342,7 +346,7 @@ bool YUIObject::OnEventOccoured(EventObject &obj)
 	/*~*/
 	switch(obj.type)
 	{
-	case MOUSE_PRESS_DOWN_L:
+	case YEVENT_MOUSE_PRESS_DOWN_L:
 		{
 			if(obj.sender == this)
 			{
@@ -352,7 +356,6 @@ bool YUIObject::OnEventOccoured(EventObject &obj)
 				OnMouseDown(pos);
 				return true;
 			}
-			YPoint &&pos=YPoint::MapFromMain(this);
 			for(auto child : GetChildren())
 			{
 				if(child->OnEventOccoured(obj))
@@ -360,7 +363,7 @@ bool YUIObject::OnEventOccoured(EventObject &obj)
 			}
 		}
 		break;
-	case MOUSE_PRESS_UP_L:
+	case YEVENT_MOUSE_PRESS_UP_L:
 		{
 			if(obj.sender == this)
 			{
@@ -370,7 +373,6 @@ bool YUIObject::OnEventOccoured(EventObject &obj)
 				OnMouseUp(pos);
 				return true;
 			}
-			YPoint &&pos=YPoint::MapFromMain(this);
 			for(auto child : GetChildren())
 			{
 				if(child->OnEventOccoured(obj))
@@ -378,7 +380,7 @@ bool YUIObject::OnEventOccoured(EventObject &obj)
 			}
 		}	
 		break;
-	case MOUSE_MOVE:
+	case YEVENT_MOUSE_MOVE:
 		{
 			if(obj.sender == this)
 			{
@@ -388,7 +390,6 @@ bool YUIObject::OnEventOccoured(EventObject &obj)
 				OnMouseMove(pos);
 				return true;
 			}
-			YPoint &&pos=YPoint::MapFromMain(this);
 			for(auto child : GetChildren())
 			{
 				if(child->OnEventOccoured(obj))
@@ -396,34 +397,32 @@ bool YUIObject::OnEventOccoured(EventObject &obj)
 			}
 		}
 		break;
-	case WINDOWS_SIZE_CHANGED:
+	case YEVENT_WINDOWS_SIZE_CHANGED:
 		{
 			m_re.x=obj.x;
 			m_re.y=obj.y;
 			m_re.width=obj.width;
 			m_re.height=obj.height;
-
-			NofityAllObserver(WINDOWS_SIZE_CHANGED);
+			NofityAllObserver(YEVENT_WINDOWS_SIZE_CHANGED);
 		}
 		break;
-	case WINDOWS_MOVE_CHANGED:
+	case YEVENT_WINDOWS_MOVE_CHANGED:
 		{
 			m_re.x=obj.x;
 			m_re.y=obj.y;
-			NofityAllObserver(WINDOWS_MOVE_CHANGED);
+			NofityAllObserver(YEVENT_WINDOWS_MOVE_CHANGED);
 		}
 		break;
-	case WINDOWS_ENTER:
+	case YEVENT_WINDOWS_ENTER:
 		{
 			if(obj.sender == this)
 			{
 				YPoint pos(obj.x,obj.y);
-				pos-=YPoint::MapFromMain(this);
+				pos -= YPoint::MapFromMain(this);
 
 				OnMouseEnter(pos);
 				return true;
 			}
-			YPoint &&pos=YPoint::MapFromMain(this);
 			for(auto child : GetChildren())
 			{
 				if(child->OnEventOccoured(obj))
@@ -431,16 +430,29 @@ bool YUIObject::OnEventOccoured(EventObject &obj)
 			}
 		}
 		break;
-	case WINDOWS_LEAVE:
+	case YEVENT_WINDOWS_LEAVE:
 		{
 			if(obj.sender == this)
 			{
 				YPoint pos(obj.x,obj.y);
-				pos-=YPoint::MapFromMain(this);
+				pos -= YPoint::MapFromMain(this);
 				OnMouseLeave(pos);
 				return true;
 			}
-			YPoint &&pos=YPoint::MapFromMain(this);
+			for(auto child : GetChildren())
+			{
+				if(child->OnEventOccoured(obj))
+					return true;
+			}
+		}
+		break;
+	case YEVENT_TIMER:
+		{
+			if(obj.sender == this)
+			{
+				OnTimerEvent(obj.x);
+				return true;
+			}
 			for(auto child : GetChildren())
 			{
 				if(child->OnEventOccoured(obj))
@@ -451,6 +463,7 @@ bool YUIObject::OnEventOccoured(EventObject &obj)
 	default:
 		break;
 	}
+	
 	return YObject::OnEventOccoured(obj);
 }
 
@@ -470,7 +483,7 @@ void YUIObject::OnMouseUp(const YPoint &point)
 	{
 		m_bPress=false;
 		OnMouseLClicked(this);
-		NofityAllObserver(MOUSE_CLICKED_L);
+		NofityAllObserver(YEVENT_MOUSE_CLICKED_L);
 	}
 }
 
@@ -498,16 +511,21 @@ void YUIObject::OnMouseRClicked(YUIObject*)
 
 
 
+void YUIObject::OnTimerEvent(unsigned int nTimerID)
+{
 
+}
 
 YRect YUIObject::GetGeometryFromMain()
 {
-	if(YWin32Application::GetUIObjectByHWND(m_hWnd) == this)
-		return YRect(0,0,m_re.width,m_re.height);
+	YPoint &&pos = GetPosFromMain();
+	return YRect(pos.x,pos.y,m_re.width,m_re.height);
+}
 
-	YRect &&re=GetGeometry();
-	YPoint &&pt=YPoint::MapFromMain(this);
-	re.x= pt.x;
-	re.y= pt.y;
-	return re;
+YPoint YUIObject::GetPosFromMain()
+{
+	if(YWin32Application::GetUIObjectByHWND(m_hWnd) == this)
+		return YPoint(0,0);
+
+	return	YPoint::MapFromMain(this);
 }

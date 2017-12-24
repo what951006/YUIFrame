@@ -10,7 +10,7 @@ mutex g_mutex;
 
 YUIObject *s_preMove=nullptr;	//previous uiobject that mouse is now on
 YUIObject *s_prePress=nullptr;	//previous uiobject that mouse was pressed
-BOOL s_bMouseTracking = FALSE; 
+
 
 
 YWin32Application::YWin32Application(HINSTANCE instance)
@@ -49,7 +49,6 @@ void YWin32Application::Update()
 {
 	YObject::Update();
 	/*Here is your code !!*/
-	//lock_guard<mutex> lg(g_mutex);
 	for(auto hp : s_hvec)
 		hp.pObj->Update();
 }

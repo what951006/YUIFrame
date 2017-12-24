@@ -94,6 +94,7 @@
     <ClInclude Include="YPainter.h" />
     <ClInclude Include="YPoint.h" />
     <ClInclude Include="YRect.h" />
+    <ClInclude Include="YTimer.h" />
     <ClInclude Include="YUIObject.h" />
     <ClInclude Include="YWin32Application.h" />
   </ItemGroup>
@@ -114,6 +115,7 @@
     <ClCompile Include="YObject.cpp" />
     <ClCompile Include="YPainter.cpp" />
     <ClCompile Include="YPoint.cpp" />
+    <ClCompile Include="YTimer.cpp" />
     <ClCompile Include="YUIObject.cpp" />
     <ClCompile Include="YWin32Application.cpp" />
   </ItemGroup>

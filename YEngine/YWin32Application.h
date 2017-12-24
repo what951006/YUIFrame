@@ -15,7 +15,7 @@
 
 extern YUIObject *s_preMove;
 extern YUIObject *s_prePress;
-extern BOOL s_bMouseTracking;
+
 
 struct HPMAP	//hwnd and pointer,they map to each other
 {
@@ -25,6 +25,7 @@ struct HPMAP	//hwnd and pointer,they map to each other
 
 class YWin32Application :public YObject
 {
+
 public:
 	YWin32Application(HINSTANCE instance);
 

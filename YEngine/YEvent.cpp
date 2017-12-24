@@ -5,7 +5,7 @@
 #include "YWin32Application.h"
 #include "YRect.h"
 #include "YPoint.h"
-
+#include "YTimer.h"
 
 YEvent::YEvent(YObject*pParent)
 	:YObject(pParent)
@@ -42,6 +42,15 @@ YUIObject* YEvent::GetJudgeChild(HWND hwnd,const YPoint pos)
 	for(auto hl : YWin32Application::GetHwndList())
 		if(hl.hwnd == hwnd)
 			return FindUIObjHelper(hl.pObj->GetGeometryFromMain(),hl.pObj,pos);
+	return nullptr;
+}
+
+YUIObject* YEvent::GetJudgeChild(int nTimerID)
+{
+	for(auto item : YTimer::s_TimerVec)
+		if(item.timerID == nTimerID)
+			return item.pObj;
+
 	return nullptr;
 }
 
