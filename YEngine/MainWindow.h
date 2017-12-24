@@ -13,6 +13,8 @@ public:
 	virtual void OnMouseLClicked();
 
 	virtual bool OnEventOccoured(EventObject &obj);
+
+	virtual void OnTimerEvent(unsigned int nTimerID);
 private:
 	YButton *m_btn;
 

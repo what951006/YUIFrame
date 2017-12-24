@@ -21,10 +21,7 @@ YTimer::YTimer(YUIObject*pParent)
 
 YTimer::~YTimer(void)
 {
-	YUIObject*pParent=dynamic_cast<YUIObject*>(GetParent());
-	if(pParent)
-		KillTimer(pParent->GetHwnd(),m_nTimerID);
-	
+	Stop();
 	RemoveTimerList(m_nTimerID);
 }
 
@@ -58,7 +55,6 @@ void YTimer::AddTimerList(YUIObject*pParent)
 
 void YTimer::RemoveTimerList(unsigned int nID)
 {
-	
 	for(auto it=s_TimerVec.begin(); it != s_TimerVec.end() ; it++)
 	{
 		if(nID == (*it).timerID)

@@ -3,6 +3,10 @@
 #include "YButton.h"
 #include "YMessageBox.h"
 #include "YLayout.h"
+#include "YTimer.h"
+
+YTimer *timr;
+
 MainWindow::MainWindow(void)
 	:YUIObject()
 {
@@ -15,6 +19,9 @@ MainWindow::MainWindow(void)
 
 	SetWindowLong(m_hWnd, GWL_STYLE, dwStyle);
 */
+
+	timr = new YTimer(this);
+	
 
 	YUIObject *pObj=new YUIObject(this);
 	pObj->SetGeometry(200,100,800,900);
@@ -60,8 +67,15 @@ bool MainWindow::OnEventOccoured(EventObject &obj)
 		{
 			HANDLE hd = GetStdHandle(STD_OUTPUT_HANDLE) ;
 			YDEBUG("Clicked again");
+			timr->Start(1000);
 			return true;
 		}
 	}
 	return YUIObject::OnEventOccoured(obj);
+}
+
+void MainWindow::OnTimerEvent(unsigned int nTimerID)
+{
+	YDEBUG("TimerEvent");
+	timr->Stop();
 }

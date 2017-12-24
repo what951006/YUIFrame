@@ -65,8 +65,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			YUIObject*pResult= YWin32Application::GetEvent()->GetJudgeChild(wParam);
 			YUIObject*pMain=YWin32Application::GetUIObjectByHWND(hWnd);
-			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_MOUSE_PRESS_UP_L,wParam);
-
+			YWin32Application::GetEvent()->SendEvent(pResult,pMain,YEVENT_TIMER,wParam);
 			if(YWIN_TIMER_ID == wParam)
 			{
 				if(s_prePress)
